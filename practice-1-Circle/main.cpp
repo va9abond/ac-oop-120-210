@@ -2,17 +2,7 @@
 #include <format>
 // #include <initializer_list> // TODO
 
-// #pragma GCC diagnostic ignored "-"
-
-
-// template <typename Backend = double>
 struct Circle {
-    public:
-        using reference = Circle&;
-        using const_reference = const Circle&;
-        using pointer = Circle*;
-        using const_pointer = const Circle*;
-
     public:
         Circle (double x = 0, double y = 0, double rad = 0)
             : m_x(x)
@@ -31,14 +21,6 @@ struct Circle {
             std::cout << "Circle (const Circle& other)\n";
         }
 
-        // Circle (Circle&& other) // = default
-        //     : m_x(other.m_x)
-        //     , m_y(other.m_y)
-        //     , m_rad(other.m_rad)
-        // {
-        //     std::cout << "Circle (Circle&& other)\n";
-        // }
-
         Circle& operator= (const Circle& other) // = default
         {
             std::cout << "Circle& operator= (const Circle& other)\n";
@@ -48,16 +30,6 @@ struct Circle {
 
             return *this;
         }
-
-        // Circle& operator= (Circle&& other) // = default
-        // {
-        //     std::cout << "Circle& operator= (Circle&& other)\n";
-        //     m_x = other.m_x;
-        //     m_y = other.m_y;
-        //     m_rad = other.m_rad;
-        //
-        //     return *this;
-        // }
 
         Circle& operator+= (double x)
         {
@@ -90,9 +62,6 @@ struct Circle {
         // friend Circle operator+ (Circle, double); // TODO
 
     private:
-        // Backend m_rad;
-        // Backend m_x;
-        // Backend m_y;
         double m_x;
         double m_y;
         double m_rad;
@@ -113,6 +82,7 @@ inline Circle operator- (const Circle& lhs, double rhs)
 
     return result;
 }
+
 
 int main (void)
 {
