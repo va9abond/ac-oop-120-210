@@ -2,8 +2,17 @@
 #include <format>
 // #include <initializer_list> // TODO
 
+// #pragma GCC diagnostic ignored "-"
+
+
 // template <typename Backend = double>
 struct Circle {
+    public:
+        using reference = Circle&;
+        using const_reference = const Circle&;
+        using pointer = Circle*;
+        using const_pointer = const Circle*;
+
     public:
         Circle (double x = 0, double y = 0, double rad = 0)
             : m_x(x)
@@ -50,10 +59,16 @@ struct Circle {
         //     return *this;
         // }
 
-        // TODO inner + vs. outer +
-        Circle operator+ (double s) const
+        Circle& operator+= (double x)
         {
-            return Circle { m_x, m_y, m_rad + s };
+            m_rad += x;
+            return *this;
+        }
+
+        Circle& operator-= (double x)
+        {
+            m_rad -= x;
+            return *this;
         }
 
         Circle operator- () const
@@ -82,6 +97,22 @@ struct Circle {
         double m_y;
         double m_rad;
 };
+
+inline Circle operator+ (const Circle& lhs, double rhs)
+{
+    Circle result {lhs};
+    result += rhs;
+
+    return result;
+}
+
+inline Circle operator- (const Circle& lhs, double rhs)
+{
+    Circle result {lhs};
+    result -= rhs;
+
+    return result;
+}
 
 int main (void)
 {
