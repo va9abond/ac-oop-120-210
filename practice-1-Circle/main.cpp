@@ -1,10 +1,9 @@
 #include <iostream>
 #include <format>
-// #include <initializer_list> // TODO
 
 struct Circle {
     public:
-        Circle (double x = 0, double y = 0, double rad = 0)
+        Circle (double x = 0, double y = 0, double rad = 0) // = default
             : m_x(x)
             , m_y(y)
             , m_rad(rad)
@@ -48,24 +47,23 @@ struct Circle {
             return Circle { -m_x, -m_y, -m_rad };
         }
 
-        // void print (int precision, char end, ostream)
-        // {
-        //     
-        // }
+        friend Circle operator+ (double, const Circle&);
+        friend Circle operator- (double, const Circle&);
+        friend Circle operator~ (const Circle&);
+        friend void print (const Circle&, char end, std::ostream&);
 
-        // void printn (int precision)
-        // {
-        //
-        //
-        // }
-
-        // friend Circle operator+ (Circle, double); // TODO
 
     private:
         double m_x;
         double m_y;
         double m_rad;
 };
+
+void print (
+    const Circle& obj, char end = '\n', std::ostream& os = std::cout
+) {
+    os << std::format("({},{},{})", obj.m_x, obj.m_y, obj.m_rad) << end;
+}
 
 inline Circle operator+ (const Circle& lhs, double rhs)
 {
@@ -83,21 +81,55 @@ inline Circle operator- (const Circle& lhs, double rhs)
     return result;
 }
 
+inline Circle operator+ (double lhs, const Circle& rhs)
+{
+    return rhs + lhs;
+}
+
+inline Circle operator- (double lhs, const Circle& rhs)
+{
+    return rhs + lhs;
+}
+
+inline Circle operator~ (const Circle& rhs)
+{
+    return Circle { rhs.m_x, -rhs.m_y, rhs.m_rad };
+}
+
 
 int main (void)
 {
     using std::cout;
     using std::format;
 
-    cout << format("Hello, World. {}", "Rustem\n");
+    cout << "MAIN.CPP: STDOUT START vvv\n";
 
-    double f = 23.358495894385;
-    printf("%f\n", f);
-    cout << format("f = {:.4}\n", f);
-    cout << format("f = {:.6}\n", f);
-    cout << format("f = {:#.14}\n", f);
+    Circle c1 (1, 2, 3);
+    print(c1);
 
-    // Circle c1
+    // Circle& operator+= (double)
+    c1 += 8;
+    print(c1);
+
+    // Circle& operator-= (double)
+    c1 -= 4;
+    print(c1);
+
+    Circle c2 {4, 5, 6};
+    print(c2);
+
+    // Circle operator- () const
+    print(-c2);
+
+    // Circle operator+ (const Circle&, double)
+    print(-c2 + 26);
+
+    // friend Circle operator+ (double, const Circle&)
+    print(26 + -c2);
+
+    // friend Circle operator~ (const Circle&);
+    print(~c2);
+
 
     // Circle c1 = Circle();
     // c1 + 20;
@@ -106,6 +138,6 @@ int main (void)
     // Circle c3 { 9, 24, 7 };
     // Circle c4 { Circle(23,13,31) };
 
-
+    cout << "MAIN.CPP: STDOUT END ^^^\n";
     return 0;
 }
