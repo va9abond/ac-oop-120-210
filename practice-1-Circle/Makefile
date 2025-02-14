@@ -15,3 +15,7 @@ CXXFLAGS := \
 default: main.cpp
 	$(CXX) -o main main.cpp $(CXXFLAGS)
 	command time ./main
+
+test: test.cpp
+	$(CXX) -o test test.cpp $(CXXFLAGS)
+	./test
