@@ -135,7 +135,7 @@ inline Circle operator- (double lhs, const Circle& rhs)
     std::cout << "[INFO]: friend Circle operator+ (const Circle&, double)\n";
 #endif
     // XXX should I follow that (rhs-lsh) = (rhs + (-lhs))?
-    return rhs + lhs;
+    return rhs - lhs;
 }
 
 inline Circle operator~ (const Circle& rhs)
