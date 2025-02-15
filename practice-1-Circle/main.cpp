@@ -147,44 +147,49 @@ inline Circle operator~ (const Circle& rhs)
 }
 
 
+void printn (const std::string_view& str, std::ostream& os = std::cout)
+{
+    // use '\n' and not std::endl to not flushing std::ostream
+    os << str << '\n';
+}
+
+
 int main (void)
 {
-    using std::cout;
-    using std::format;
+    printn("=== TESTING BEGIN ===");
+    printn("");
 
+
+    printn("TEST [default ctor]: Circle c1 (1,2,3)");
     Circle c1 (1, 2, 3);
     print(c1);
 
-    // Circle& operator+= (double)
+    printn("TEST [Circle::Circle& operator+= (double)]: c1 += 8");
     c1 += 8;
     print(c1);
 
-    // Circle& operator-= (double)
+    printn("TEST [Circle& operator-= (double)]: c1 -= 4");
     c1 -= 4;
     print(c1);
 
+    printn("TEST [initializer_list -> default ctor]: Circle c2 {4,5,6}");
     Circle c2 {4, 5, 6};
     print(c2);
 
-    // Circle operator- () const
+    printn("TEST [Circle::Circle operator- (): -c2");
     print(-c2);
 
-    // Circle operator+ (const Circle&, double)
+    printn("TEST [Circle operator+ (const Circle&, double)]: -c2 + 26");
     print(-c2 + 26);
 
-    // friend Circle operator+ (double, const Circle&)
-    print(26 + -c2);
+    printn("TEST [friend Circle operator+ (double, const Circle&)]: 26 + c2");
+    print(26 + c2);
 
-    // friend Circle operator~ (const Circle&);
+    printn("TEST [friend Circle operator~ (const Circle&)]: ~c2");
     print(~c2);
 
 
-    // Circle c1 = Circle();
-    // c1 + 20;
-    //
-    // Circle c2 = Circle(c1);
-    // Circle c3 { 9, 24, 7 };
-    // Circle c4 { Circle(23,13,31) };
-
+    printn("");
+    printn("=== TESTING END ===");
     return 0;
 }
