@@ -47,10 +47,14 @@ struct Circle {
             return Circle { -m_x, -m_y, -m_rad };
         }
 
+        void print (std::ostream& os = std::cout) const
+        {
+            os << std::format("({},{},{})", m_x, m_y, m_rad);
+        }
+
         friend Circle operator+ (double, const Circle&);
         friend Circle operator- (double, const Circle&);
         friend Circle operator~ (const Circle&);
-        friend void print (const Circle&, char end, std::ostream&);
 
 
     private:
@@ -59,10 +63,12 @@ struct Circle {
         double m_rad;
 };
 
-void print (
-    const Circle& obj, char end = '\n', std::ostream& os = std::cout
-) {
-    os << std::format("({},{},{})", obj.m_x, obj.m_y, obj.m_rad) << end;
+// XXX presision if Backend is a float type
+// XXX variadic args?
+void print (const Circle& obj, std::ostream& os = std::cout, char end = '\n')
+{
+    obj.print(os);
+    os << end;
 }
 
 inline Circle operator+ (const Circle& lhs, double rhs)
