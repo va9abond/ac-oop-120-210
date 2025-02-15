@@ -7,7 +7,7 @@
 // constexpr int DEBUG_INDENT = (int)std::size("[INFO]:"); // EXPERIMENTAL
 
 
-struct Circle {
+class Circle {
     public:
         Circle (double x = 0, double y = 0, double rad = 0) // = default
             : m_x(x)
