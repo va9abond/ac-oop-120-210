@@ -20,7 +20,6 @@ class Vector {
         explicit Vector (size_type count = 100)
             : Mycapacity(count) // : Mycapacity(count + CAPACITY_SHADOW)
             , Mysize(count)
-            // , Mycont(nullptr) // just in case count == 0 ????
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -117,30 +116,19 @@ class Vector {
                 std::format("[INFO]: Vector::Vector({}, {})\n", other, size);
 #endif
             Construct_n(size);
-            if (double *iter = Mycont; iter != nullptr) // |
-                for (size_t i = 0; i < size; ++i)       // | Assign_counted_range
-                    *iter++ = *other++;                 // |
+            Assign_counted_range(other, size);
         }
 
         Vector& operator= (const Vector& rhs)
         {
             if (this != &rhs) {
                 if (Mycapacity != rhs.Mycapacity) {
-                    delete[] Mycont; // | Tidy
+                    Tidy();
                     Construct_n(rhs.Mycapacity);
                 }
                 Mycapacity = rhs.Mycapacity;
 
-                {
-                    pointer myiter = Mycont;
-                    pointer iter = rhs.Mycont;
-                    if (iter) // rhs.Mycapacity != 0 vvv
-                        // | Assign_counted_range
-                        for (size_t i = 0, size = rhs.Mysize; i < size; ++i)
-                            *myiter++ = *iter++;
-                }
-
-                Mysize = rhs.Mysize;
+                Assign_counted_range(rhs.Mycont, rhs.Mysize);
             }
 
             return *this;
