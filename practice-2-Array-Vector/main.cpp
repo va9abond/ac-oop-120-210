@@ -81,6 +81,14 @@ class Vector {
             Buy_nonzero(count);
         }
 
+        // destroy class invariant: free Mycont, zeros Mycapacity, Mysize
+        void Tidy()
+        {
+            delete[] Mycont;
+            Mysize = 0;
+            Mycapacity = 0;
+        }
+
     public:
         // C-array to Vector
         Vector (double *other, size_type size)
