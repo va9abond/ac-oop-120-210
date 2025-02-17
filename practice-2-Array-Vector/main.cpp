@@ -86,6 +86,7 @@ class Vector {
             if (Mycont)
                 delete[] Mycont;
 
+            Mycont = nullptr;
             Mysize = 0;
             Mycapacity = 0;
         }
@@ -146,13 +147,11 @@ class Vector {
 
         ~Vector()
         {
-            std::cout << "[INFO]: dtor\n";
-            Mycapacity = 0;
-            Mycont     = 0;
-            if (Mycont)
-                // XXX delete vs. delete[]
-                delete[] Mycont;
-            Mycont = nullptr;
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector::~Vector()\n");
+#endif
+            Tidy();
         }
 
         constexpr size_type size() const noexcept
@@ -387,7 +386,7 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [x] Vector& operator= (const Vector&)
 // [x] Vector (const Vector&)
 // [ ] Rule of five
-// [ ] ~Vector()
+// [x] ~Vector()
 // [x] size_type size()
 // [x] size_type max_size()
 // [x] size_type capacity()
