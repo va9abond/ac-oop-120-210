@@ -41,6 +41,14 @@ class Vector {
         }
 
     private:
+        static void Xlength_error() {
+            std::cout << "\033[" << "[ERROR]: vector too long" << "\033[m" << '\n';
+        }
+
+        static void Xrange_error() {
+            std::cout << "\033[" << "[ERROR]: invalid vector subscript" << "\033[m" << '\n';
+        }
+
         // allocate non-zero memory for 'Mycont'
         void Buy_nonzero (const size_type new_capacity)
         {
@@ -227,6 +235,8 @@ class Vector_child : public Vector {
             std::cout << "[INFO]: Vector_child dtor\n";
         }
 
+        // XXX canonically insert/erase return iterators to pos, but iterators
+        //     are wrapped pointer, should i return raw pointers?
         size_t erase (size_t pos = -1)
         {
             if (Mysize >= 0) { // most likely case
