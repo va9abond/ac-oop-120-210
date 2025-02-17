@@ -210,6 +210,13 @@ class Vector {
 
 class Vector_child : public Vector {
     public:
+        using Mybase          = Vector;
+        using value_type      = Mybase::value_type;
+        using reference       = Mybase::reference;
+        using const_reference = Mybase::const_reference;
+        using size_type       = Mybase::size_type;
+
+    public:
         Vector_child (size_t size = 100) : Vector(size)
         {
             std::cout << "[INFO]: Vector_child ctor\n";
