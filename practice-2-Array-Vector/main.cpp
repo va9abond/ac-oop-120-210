@@ -69,8 +69,11 @@ class Vector {
             if (count != 0) {
                 Buy_nonzero(count);
 
-                for (size_t i = 0, double *mycont = Mycont; i < count; ++i)
-                    *mycont++ = val;
+                if (Mycont) { // memory has been allocated by Buy_nonzero vvv
+                    double *iter = Mycont;
+                    for (size_t i = 0; i < count; ++i)
+                        *iter++ = val;
+                }
             }
         }
 
