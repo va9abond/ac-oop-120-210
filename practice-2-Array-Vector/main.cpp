@@ -92,7 +92,7 @@ class Vector {
             Construct_n(size);
             if (double *iter = Mycont; iter != nullptr)
                 for (size_t i = 0; i < size; ++i)
-                    *iter++ = *other++; // XXX it doesn't work
+                    *iter++ = *other++;
         }
 
         Vector& operator= (const Vector& other)
@@ -364,7 +364,7 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [x] void Construct_n (size_type)
 // [x] void Construct_n (size_type, const value_type&)
 // [x] void Buy_nonzero (const size_type)
-// [ ] Vector (double*)
+// [ ] Vector (double*, size_type)
 // [ ] Vector (const Vector&)
 // [ ] Vector& operator= (const Vector&)
 // [ ] Rule of five
