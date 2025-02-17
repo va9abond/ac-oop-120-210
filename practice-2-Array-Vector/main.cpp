@@ -85,18 +85,19 @@ class Vector {
         }
 
     public:
-
         // C-array to Vector
-        Vector (double *other, size_t size)
+        Vector (double *other, size_type size)
+            : Mycapacity(size)
+            , Mysize(size)
         {
-            std::cout << "[INFO]: ctor\n";
-            Mycont = new double[size];
-            Mycapacity = size;
-            Mysize = size;
-
-            for (size_t i = 0; i < size; ++i) {
-                *Mycont++ = *other++; // XXX it doesn't work
-            }
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector::Vector({}, {})\n", other, size);
+#endif
+            Construct_n(size);
+            if (double *iter = Mycont; iter != nullptr)
+                for (size_t i = 0; i < size; ++i)
+                    *iter++ = *other++; // XXX it doesn't work
         }
 
         Vector& operator= (const Vector& other)
