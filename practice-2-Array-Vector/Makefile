@@ -10,6 +10,7 @@ CXXFLAGS := \
 	-Wno-unused-variable \
 	-Wno-unused-macros \
 	-Wno-unused-function \
+
 CXXFLAGS_RELEASE := \
 	-Werror \
 	-pedantic-errors \
@@ -21,14 +22,14 @@ CXXFLAGS_RELEASE := \
 
 # compile and run
 default: main.cpp
-	$(CXX) -o main main.cpp $(CXXFLAGS)
+	$(CXX) $(CXXFLAGS) -o main main.cpp
 	command time ./main
 
 release: main.cpp
-	$(CXX) -o release main.cpp $(CXXFLAGS_RELEASE)
+	$(CXX) $(CXXFLAGS_RELEASE) -o release main.cpp
 	./release
 
 test: test.cpp
-	$(CXX) -o test test.cpp $(CXXFLAGS)
+	$(CXX) $(CXXFLAGS) -o test test.cpp
 	./test
 
