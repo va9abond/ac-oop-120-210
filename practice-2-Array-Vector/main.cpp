@@ -54,10 +54,10 @@ class Vector {
         {
             Mycont = nullptr;
 
-            if (new_capacity <= max_size()) { // most likely case
+            if (new_capacity <= max_size() && new_capacity > 0) {
                 Mycont = new value_type[new_capacity];
                 return ;
-            }
+            } // most likely case ^^^
 
             // std::cout << "Buy more memmory lol\n";
             Xlength_error();
@@ -66,22 +66,17 @@ class Vector {
         // construct 'count' elements by 'val'
         void Construct_n (const size_type count, const value_type &val)
         {
-            if (count != 0) {
-                Buy_nonzero(count);
-
-                if (Mycont) { // memory has been allocated by Buy_nonzero vvv
-                    double *iter = Mycont;
-                    for (size_t i = 0; i < count; ++i)
-                        *iter++ = val;
-                }
+            Buy_nonzero(count);
+            if (double *iter = Mycont; iter) {
+                for (size_t i = 0; i < count; ++i)
+                    *iter++ = val;
             }
         }
 
         // construct 'count' elements with default init. = only alloc memory
         void Construct_n (const size_type count)
         {
-            if (count != 0)
-                Buy_nonzero(count);
+            Buy_nonzero(count);
         }
 
     public:
