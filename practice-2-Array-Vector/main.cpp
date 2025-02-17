@@ -96,6 +96,7 @@ class Vector {
             if (count > Mycapacity) {
                 Tidy();
                 Construct_n(count);
+                Mycapacity = count;
             }
 
             if (pointer iter = Mycont; iter != nullptr) {
@@ -103,7 +104,6 @@ class Vector {
                     *iter++ = *first++;
             }
 
-            Mycapacity = count;
             Mysize = count;
         }
 
@@ -138,15 +138,10 @@ class Vector {
 
         Vector (const Vector& other)
         {
-            Mycont = new double[other.Mycapacity];
+            Construct_n(other.Mycapacity);
             Mycapacity = other.Mycapacity;
 
-            size_t other_size  = other.Mysize; // cached
-            double *other_cont = other.Mycont; // cached
-            for (size_t i = 0; i < other_size; ++i) {
-                Mycont[i] = other_cont[i];
-            }
-            Mysize = other_size;
+            Assign_counted_range(other.Mycont, other.Mysize);
         }
 
         ~Vector()
@@ -388,9 +383,9 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [x] void Construct_n (size_type)
 // [x] void Construct_n (size_type, const value_type&)
 // [x] void Buy_nonzero (const size_type)
-// [ ] Vector (double*, size_type)
-// [ ] Vector (const Vector&)
-// [ ] Vector& operator= (const Vector&)
+// [x] Vector (double*, size_type)
+// [x] Vector& operator= (const Vector&)
+// [x] Vector (const Vector&)
 // [ ] Rule of five
 // [ ] ~Vector()
 // [x] size_type size()
