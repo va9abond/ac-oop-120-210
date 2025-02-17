@@ -355,21 +355,18 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [ ] const_reference at (size_type) const
 // [ ] reference operator[] (size_type pos)
 // [ ] const_reference operator[] (size_type pos) const
+// [ ] void push_back (const value_type&)
+// [ ] void pop_back ()
 // [ ] print()
 //
 // >>> Vector_child
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// [ ] Vector_child (size_type)
+// [ ] ~Vector_child()
+// [ ] void remove (size_type)
+// [ ] void insert (size_type, const value_type&)
+// [ ] size_type find_lr (const value_type&, size_type, size_type)
+// [ ] size_type find_rl (const value_type&, size_type, size_type)
+// [ ] size_type find (const value_type)
+// [ ] Vector_child slice (size_type, size_type)
+// [ ] Vector_chile& operator+= (const value_type&)
+// [ ] Vector_child operator+ (const Vector_child&, const value_type&)
