@@ -89,6 +89,23 @@ class Vector {
             Mycapacity = 0;
         }
 
+        // assign elements from counted range first + [0, count)
+        void Assign_counted_range (pointer first, const size_type count)
+        {
+            if (count > Mycapacity) {
+                Tidy();
+                Construct_n(count);
+            }
+
+            if (pointer iter = Mycont; iter != nullptr) {
+                for (size_t i = 0; i < count; ++i)
+                    *iter++ = *first++;
+            }
+
+            Mycapacity = count;
+            Mysize = count;
+        }
+
     public:
         // C-array to Vector
         Vector (double *other, size_type size)
