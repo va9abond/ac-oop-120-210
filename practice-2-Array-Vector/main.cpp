@@ -127,8 +127,8 @@ class Vector {
                 if (Mycapacity != rhs.Mycapacity) {
                     Tidy();
                     Construct_n(rhs.Mycapacity);
+                    Mycapacity = rhs.Mycapacity;
                 }
-                Mycapacity = rhs.Mycapacity;
 
                 Assign_counted_range(rhs.Mycont, rhs.Mysize);
             }
