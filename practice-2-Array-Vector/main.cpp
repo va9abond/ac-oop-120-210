@@ -11,6 +11,8 @@ class Vector {
         using value_type      = double;
         using reference       = double&;
         using const_reference = const double&;
+        using pointer         = double*;
+        using const_pointer   = const double*;
         using size_type       = size_t;
 
     public:
@@ -90,24 +92,31 @@ class Vector {
                 std::format("[INFO]: Vector::Vector({}, {})\n", other, size);
 #endif
             Construct_n(size);
-            if (double *iter = Mycont; iter != nullptr)
-                for (size_t i = 0; i < size; ++i)
-                    *iter++ = *other++;
+            if (double *iter = Mycont; iter != nullptr) // |
+                for (size_t i = 0; i < size; ++i)       // | Assign_counted_range
+                    *iter++ = *other++;                 // |
         }
 
-        Vector& operator= (const Vector& other)
+        Vector& operator= (const Vector& rhs)
         {
-            if (Mycapacity != other.Mycapacity) {
-                // reallocate
-            }
-            Mycapacity = other.Mycapacity;
+            if (this != &rhs) {
+                if (Mycapacity != rhs.Mycapacity) {
+                    delete[] Mycont; // | Tidy
+                    Construct_n(rhs.Mycapacity);
+                }
+                Mycapacity = rhs.Mycapacity;
 
-            size_t other_size  = other.Mysize; // cached
-            double *other_cont = other.Mycont; // cached
-            for (size_t i = 0; i < other_size; ++i) {
-                Mycont[i] = other_cont[i];
+                {
+                    pointer myiter = Mycont;
+                    pointer iter = rhs.Mycont;
+                    if (iter) // rhs.Mycapacity != 0 vvv
+                        // | Assign_counted_range
+                        for (size_t i = 0, size = rhs.Mysize; i < size; ++i)
+                            *myiter++ = *iter++;
+                }
+
+                Mysize = rhs.Mysize;
             }
-            Mysize = other_size;
 
             return *this;
         }
