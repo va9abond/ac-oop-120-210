@@ -52,21 +52,22 @@ class Vector {
         // allocate non-zero memory for 'Mycont'
         void Buy_nonzero (const size_type new_capacity)
         {
-            if (new_capacity > max_size()) {
-                // std::cout << "Buy more memmory lol\n";
-                Mycont = nullptr;
-                Xlength_error();
+            Mycont = nullptr;
+
+            if (new_capacity <= max_size()) { // most likely case
+                Mycont = new value_type[new_capacity];
                 return ;
             }
 
-            Mycont = new value_type[new_capacity];
+            // std::cout << "Buy more memmory lol\n";
+            Xlength_error();
         }
 
         // construct 'count' elements by 'val'
         void Construct_n (const size_type count, const value_type &val)
         {
             if (count != 0) {
-                Buy_nonzero(cout);
+                Buy_nonzero(count);
 
                 for (size_t i = 0, double *mycont = Mycont; i < count; ++i)
                     *mycont++ = val;
@@ -363,7 +364,7 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [ ] Vector (std::initilizer_list)
 // [x] Construct_n (size_type)
 // [x] Construct_n (size_type, const value_type&)
-// [x] Buy_nonzero (const size_type)
+// [x] void Buy_nonzero (const size_type)
 // [ ] Vector (double*)
 // [ ] Vector (const Vector&)
 // [ ] Vector& operator= (const Vector&)
