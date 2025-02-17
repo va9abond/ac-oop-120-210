@@ -83,7 +83,9 @@ class Vector {
         // destroy class invariant: free Mycont, zeros Mycapacity, Mysize
         void Tidy()
         {
-            delete[] Mycont;
+            if (Mycont)
+                delete[] Mycont;
+
             Mysize = 0;
             Mycapacity = 0;
         }
