@@ -4,7 +4,7 @@
 #define DEBUG_INFO_LEVEL 0 // 0 - turn off any debug info
                            // 1 - function type
                            // 2 - reallocations
-#define CAPACITY_SHADOW 10
+constexpr unsigned int CAPACITY_SHADOW = 10;
 
 class Vector {
     public:
