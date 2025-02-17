@@ -1,7 +1,11 @@
 #include <iostream>
 #include <format>
 
-// dynamic array is vector
+#define DEBUG_INFO_LEVEL 0 // 0 - turn off any debug info
+                           // 1 - function type
+                           // 2 - reallocations
+#define CAPACITY_SHADOW 10
+
 class Vector {
     public:
         using value_type      = double;
@@ -10,13 +14,61 @@ class Vector {
         using size_type       = size_t;
 
     public:
-        Vector (size_t size = 100)
+        // Vector with 'count' capacity (no default init-tion)
+        explicit Vector (size_type count = 100)
+            : Mycapacity(count) // : Mycapacity(count + CAPACITY_SHADOW)
+            , Mysize(count)
+            // , Mycont(nullptr) // just in case count == 0 ????
         {
-            std::cout << "[INFO]: ctor\n";
-            Mycont = new double[size];
-            Mycapacity = size;
-            Mysize = 0;
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector::Vector(size_type count = {})\n", count);
+#endif
+            Construct_n(count);
+            // TODO Vector v = { 32, 4023, 2042, 0.248, };
         }
+
+        // Vector of 'count' values 'val'
+        explicit Vector (size_type count, const value_type &val)
+            : Mycapacity(count)
+            , Mysize(count)
+        {
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector::Vector(size_type count = {})\n", count);
+#endif
+            Construct_n(count, val);
+        }
+
+    private:
+        // allocate non-zero memory for 'Mycont'
+        void Buy_nonzero (const size_type new_capacity)
+        {
+            if (new_capacity > max_size())
+                // TODO generate error
+
+            Mycont = new value_type[new_capacity];
+        }
+
+        // construct 'count' elements by 'val'
+        void Construct_n (const size_type count, const value_type &val)
+        {
+            if (count != 0) {
+                Buy_nonzero(cout);
+
+                for (size_t i = 0, double *mycont = Mycont; i < count; ++i)
+                    *mycont++ = val;
+            }
+        }
+
+        // construct 'count' elements with default init. = only alloc memory
+        void Construct_n (const size_type count)
+        {
+            if (count != 0)
+                Buy_nonzero(count);
+        }
+
+    public:
 
         // C-array to Vector
         Vector (double *other, size_t size)
@@ -29,84 +81,6 @@ class Vector {
             for (size_t i = 0; i < size; ++i) {
                 *Mycont++ = *other++; // XXX it doesn't work
             }
-        }
-
-        ~Vector()
-        {
-            std::cout << "[INFO]: dtor\n";
-            Mycapacity = 0;
-            Mycont     = 0;
-            if (Mycont)
-                // XXX delete vs. delete[]
-                delete[] Mycont;
-            Mycont = nullptr;
-        }
-
-        size_t max_size()
-        {
-            return std::numeric_limits<size_t>::max();
-        }
-
-        size_t capacity()
-        {
-            return Mycapacity;
-        }
-
-        size_t size()
-        {
-            return Mysize;
-        }
-
-        // bounds checking
-        // reference at (size_type pos)
-        // const_reference at (size_type pos) const
-        double at (size_t pos)
-        {
-            if (pos < Mysize)
-                return Mycont[pos];
-
-            // else
-            // throw(exception) std::out_or_range if pos >= size()
-        }
-
-        // no bounds checking is performed
-        // reference operator[] (size_type pos)
-        // const_reference operator[] (size_type pos) const
-
-        void set_at (size_t pos, double val)
-        {
-            if (pos < Mysize)
-                Mycont[pos] = val;
-            // else
-            // throw(exception) std::out_or_range if pos >= size()
-        }
-
-        void push (double val)
-        {
-            if (Mysize < Mycapacity-1) { // most likely case
-                Mycont[Mysize++] = val;
-                return ;
-            }
-
-            double *Cont_extended = new double[Mycapacity*2 + 1]; // if Mycapacity == 0
-            for (size_t i = 0; i < Mysize; ++i) {
-                // does it works, what is a Mycont points to after loop
-                // XXX this should not work!
-                *Cont_extended++ = *Mycont++;
-            }
-
-            delete[] Mycont;
-            Mycont = Cont_extended;
-            Mycapacity = Mycapacity*2 + 1;
-
-            Mycont[Mysize++] = val;
-        }
-
-        void pop()
-        {
-            if (Mysize >= 0)
-                --Mysize;
-            // exception
         }
 
         Vector& operator= (const Vector& other)
@@ -139,6 +113,78 @@ class Vector {
             Mysize = other_size;
         }
 
+        ~Vector()
+        {
+            std::cout << "[INFO]: dtor\n";
+            Mycapacity = 0;
+            Mycont     = 0;
+            if (Mycont)
+                // XXX delete vs. delete[]
+                delete[] Mycont;
+            Mycont = nullptr;
+        }
+
+        constexpr size_type size() const noexcept
+        {
+            return Mysize;
+        }
+
+        constexpr size_type max_size() const noexcept
+        {
+            return std::numeric_limits<size_type>::max();
+        }
+
+        constexpr size_type capacity() const noexcept
+        {
+            return Mycapacity; // std::distance(begin(), end())
+            // return static_cast<size_type>(_My_data._Mylast - _My_data._Myfirst);
+        }
+
+        // access specified element with bounds checking
+        reference at (size_type pos)
+        {
+            if (pos < Mysize)
+                return Mycont[pos];
+
+            // else
+            // throw(exception) std::out_or_range if pos >= size()
+        }
+
+        // access specified element (no bounds checking is performed)
+        // reference operator[] (size_type pos)
+        // const_reference operator[] (size_type pos) const
+
+        // adds an element to the end
+        void push_back (double val)
+        {
+            if (Mysize < Mycapacity-1) { // most likely case
+                Mycont[Mysize++] = val;
+                return ;
+            }
+
+            double *Cont_extended = new double[Mycapacity*2 + 1]; // if Mycapacity == 0
+            for (size_t i = 0; i < Mysize; ++i) {
+                // does it works, what is a Mycont points to after loop
+                // XXX this should not work!
+                *Cont_extended++ = *Mycont++;
+            }
+
+            delete[] Mycont;
+            Mycont = Cont_extended;
+            Mycapacity = Mycapacity*2 + 1;
+
+            Mycont[Mysize++] = val;
+        }
+
+        // removes the last element
+        void pop_back()
+        {
+            if (Mysize >= 0)
+                --Mysize;
+            // exception
+        }
+
+
         void print()
         {
             std::cout <<
@@ -153,9 +199,9 @@ class Vector {
 
 
     protected:
-        size_t Mycapacity;
-        size_t Mysize;
-        double *Mycont;
+        size_type Mycapacity; // main allocated memory as number of elements
+        size_type Mysize;     // number of elements
+        double    *Mycont;    // pointer to the beggining of main memory
 };
 
 // https://en.cppreference.com/w/cpp/container/array/get
@@ -287,3 +333,43 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
     return v;
 }
 
+// =======
+// ROADMAP
+// =======
+// >>> Vector
+// [x] Vector (size_type)
+// [x] Vector (size_type, const value_type&)
+// [ ] Vector (std::initilizer_list)
+// [x] Construct_n (size_type)
+// [x] Construct_n (size_type, const value_type&)
+// [ ] Buy_nonzero (const size_type)
+// [ ] Vector (double*)
+// [ ] Vector (const Vector&)
+// [ ] Vector& operator= (const Vector&)
+// [ ] Rule of five
+// [ ] ~Vector()
+// [x] size_type size()
+// [x] size_type max_size()
+// [x] size_type capacity()
+// [ ] reference at (size_type)
+// [ ] const_reference at (size_type) const
+// [ ] reference operator[] (size_type pos)
+// [ ] const_reference operator[] (size_type pos) const
+// [ ] print()
+//
+// >>> Vector_child
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
