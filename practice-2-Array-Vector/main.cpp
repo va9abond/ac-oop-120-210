@@ -220,7 +220,7 @@ class Vector_child : public Vector {
             std::cout << "[INFO]: Vector_child dtor\n";
         }
 
-        void remove (size_t pos = -1)
+        size_t erase (size_t pos = -1)
         {
             if (Mysize >= 0) { // most likely case
 
@@ -273,7 +273,7 @@ class Vector_child : public Vector {
             return (first < last) ? find_lr(val, first, last) : find_rl(val, first, last);
         }
 
-        void insert (size_t pos, const double& val)
+        size_t insert (size_t pos, const double& val)
         {
             if (Mysize >= Mycapacity-1) { // rare case
                 double *Cont_extended = new double[Mycapacity*2 + 1]; // +1 if Mycapacity == 0
@@ -362,8 +362,8 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // >>> Vector_child
 // [ ] Vector_child (size_type)
 // [ ] ~Vector_child()
-// [ ] void remove (size_type)
-// [ ] void insert (size_type, const value_type&)
+// [ ] size_type erase (size_type)
+// [ ] size_type insert (size_type, const value_type&)
 // [ ] size_type find_lr (const value_type&, size_type, size_type)
 // [ ] size_type find_rl (const value_type&, size_type, size_type)
 // [ ] size_type find (const value_type)
