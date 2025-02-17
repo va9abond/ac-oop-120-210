@@ -44,10 +44,14 @@ class Vector {
     private:
         static void Xlength_error() {
             std::cout << "\033[" << "[ERROR]: vector too long" << "\033[m" << '\n';
+            std::exit(EXIT_FAILURE);
+            // throw std::length_error(where);
         }
 
         static void Xrange_error() {
             std::cout << "\033[" << "[ERROR]: invalid vector subscript" << "\033[m" << '\n';
+            std::exit(EXIT_FAILURE);
+            // throw std::out_of_range(where);
         }
 
         // allocate non-zero memory for 'Mycont'
@@ -173,16 +177,22 @@ class Vector {
         // access specified element with bounds checking
         reference at (size_type pos)
         {
-            if (pos < Mysize)
+            if (pos < Mysize) // most likely case
                 return Mycont[pos];
 
-            // else
-            // throw(exception) std::out_or_range if pos >= size()
+            Xrange_error();
+            // std::exit(EXIT_FAILURE);
         }
 
+        // const_reference at (size_type pos) const { }
+
         // access specified element (no bounds checking is performed)
-        // reference operator[] (size_type pos)
-        // const_reference operator[] (size_type pos) const
+        reference operator[] (size_type pos)
+        {
+            return *(Mycont+pos);
+        }
+
+        // const_reference operator[] (size_type pos) const { }
 
         // adds an element to the end
         void push_back (double val)
@@ -390,9 +400,9 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [x] size_type size()
 // [x] size_type max_size()
 // [x] size_type capacity()
-// [ ] reference at (size_type)
+// [x] reference at (size_type)
 // [ ] const_reference at (size_type) const
-// [ ] reference operator[] (size_type pos)
+// [x] reference operator[] (size_type pos)
 // [ ] const_reference operator[] (size_type pos) const
 // [ ] void push_back (const value_type&)
 // [ ] void pop_back ()
