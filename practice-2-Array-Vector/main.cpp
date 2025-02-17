@@ -52,8 +52,12 @@ class Vector {
         // allocate non-zero memory for 'Mycont'
         void Buy_nonzero (const size_type new_capacity)
         {
-            if (new_capacity > max_size())
-                // TODO generate error
+            if (new_capacity > max_size()) {
+                // std::cout << "Buy more memmory lol\n";
+                Mycont = nullptr;
+                Xlength_error();
+                return ;
+            }
 
             Mycont = new value_type[new_capacity];
         }
@@ -359,7 +363,7 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [ ] Vector (std::initilizer_list)
 // [x] Construct_n (size_type)
 // [x] Construct_n (size_type, const value_type&)
-// [ ] Buy_nonzero (const size_type)
+// [x] Buy_nonzero (const size_type)
 // [ ] Vector (double*)
 // [ ] Vector (const Vector&)
 // [ ] Vector& operator= (const Vector&)
