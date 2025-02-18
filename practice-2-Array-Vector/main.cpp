@@ -419,8 +419,8 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [x] reference operator[] (size_type pos)
 // [ ] const_reference operator[] (size_type pos) const
 // [x] void push_back (const value_type&)
-// [ ] void pop_back ()
-// [ ] print()
+// [x] void pop_back ()
+// [x] print()
 //
 //
 // >>> Vector_child
