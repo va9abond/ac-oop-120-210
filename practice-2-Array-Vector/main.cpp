@@ -270,6 +270,8 @@ class Vector_child : public Vector {
         using reference       = Mybase::reference;
         using const_reference = Mybase::const_reference;
         using size_type       = Mybase::size_type;
+        using pointer         = Mybase::pointer;
+        using const_pointer   = Mybase::const_pointer;
 
     public:
         explicit Vector_child (size_type count = 100) : Vector(count)
@@ -288,26 +290,35 @@ class Vector_child : public Vector {
 #endif
         }
 
-        // XXX canonically insert/erase return iterators to pos, but iterators
-        //     are wrapped pointer, should i return raw pointers?
-        size_t erase (size_t pos = -1)
+        // canonically insert/erase apply as arguments and return iterator to
+        // position. Iterator is just a wrapped pointer, and because I
+        // didn't implement iterators for container, I will use raw pointers.
+        // pos - index, where - pointer (iterator)
+        pointer erase (const_pointer where)
         {
-            if (Mysize >= 0) { // most likely case
+            // TODO check is where in [Mycont, Mycont+Mysize) range
 
-                while (pos < 0)
-                    pos += this->Mysize;
-                    // pos += ::Mysize;
-
-                double *mycont = Mycont+pos;
-                size_t mysize_1 = Mysize-1; // cached // init inside for/while
-                for (size_t i = pos; i < mysize_1; ++i) {
-                    Mycont[i] = Mycont[i+1];
+            if (Mysize > 0) { // most likely case
+                // VER.1 - on pointers
+                pointer last_1  = Mycont+Mysize - 1;
+                for (pointer iter = const_cast<pointer>(where);
+                        iter != last_1; ++iter)
+                {
+                    *iter = *(iter+1);
                 }
                 --Mysize;
+                return const_cast<pointer>(where);
 
+                // VER.2 - on indexes (safer)
+                // size_type mysize_1 = Mysize-1;
+                // for (size_type i = pos; i < mysize_1; ++i) {
+                //     Mycont[i] = Mycont[i+1];
+                // }
+                // --Mysize;
+                // return Mycont[pos];
             }
 
-            // throw
+            return Mycont;
         }
 
     private:
