@@ -282,7 +282,10 @@ class Vector_child : public Vector {
 
         ~Vector_child()
         {
-            std::cout << "[INFO]: Vector_child dtor\n";
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector_child::~Vector_child()\n");
+#endif
         }
 
         // XXX canonically insert/erase return iterators to pos, but iterators
