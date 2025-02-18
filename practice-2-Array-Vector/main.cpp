@@ -199,10 +199,19 @@ class Vector {
                 return ;
             }
 
+            size_type CAPACITY_STEP = max_size() / 50; // magic variable
+            size_type New_capacity = 0;
+            size_type diff = max_size - Mycapacity;
+            if (diff > CAPACITY_STEP) {
+                New_capacity = Mycapacity + CAPACITY_STEP;
+            } else if (diff > 0) {
+                New_capacity = Mycapacity + 1;
+            }
+
             // Mycapacity == max_size() then New_capacity == 0 and
             // Construct_n(New_capacity) will cause length error
             // ^^^ to prefent type overflow
-            size_type New_capacity = (Mycapacity+1) * (Mycapacity != max_size());
+            // size_type New_capacity = (Mycapacity+1) * (Mycapacity != max_size());
             // bad: frequent memory overload
             // good: the ability to use the entire range of type 'size_type'
 
