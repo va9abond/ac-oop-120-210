@@ -19,7 +19,7 @@ class Vector {
         // Vector with 'count' capacity (no default init-tion)
         explicit Vector (size_type count = 100)
             : Mycapacity(count) // : Mycapacity(count + CAPACITY_SHADOW)
-            , Mysize(count)
+            , Mysize(0)
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -32,7 +32,7 @@ class Vector {
         // Vector of 'count' values 'val'
         explicit Vector (size_type count, const value_type &val)
             : Mycapacity(count)
-            , Mysize(count)
+            , Mysize(0)
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -116,7 +116,7 @@ class Vector {
         // C-array to Vector
         Vector (double *other, size_type size)
             : Mycapacity(size)
-            , Mysize(size)
+            , Mysize(0)
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
