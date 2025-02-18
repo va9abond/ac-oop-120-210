@@ -201,7 +201,7 @@ class Vector {
 
             size_type CAPACITY_STEP = max_size() / 50; // magic variable
             size_type New_capacity = 0;
-            size_type diff = max_size - Mycapacity;
+            size_type diff = max_size() - Mycapacity;
             if (diff > CAPACITY_STEP) {
                 New_capacity = Mycapacity + CAPACITY_STEP;
             } else if (diff > 0) {
@@ -237,7 +237,6 @@ class Vector {
                 --Mysize;
             // else do nothing
         }
-
 
         void print()
         {
