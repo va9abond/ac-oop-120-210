@@ -64,8 +64,7 @@ class Vector {
                 return ;
             } // most likely case ^^^
 
-            // std::cout << "Buy more memmory lol\n";
-            Xlength_error();
+            Xlength_error(); // std::cout << "Buy more memmory lol\n";
         }
 
         // construct 'count' elements by 'val'
@@ -197,23 +196,31 @@ class Vector {
         // adds an element to the end
         void push_back (double val)
         {
-            if (Mysize < Mycapacity-1) { // most likely case
+            if (Mysize < Mycapacity) { // most likely case
                 Mycont[Mysize++] = val;
                 return ;
             }
 
-            double *Cont_extended = new double[Mycapacity*2 + 1]; // if Mycapacity == 0
-            for (size_t i = 0; i < Mysize; ++i) {
-                // does it works, what is a Mycont points to after loop
-                // XXX this should not work!
-                *Cont_extended++ = *Mycont++;
+            // Mycapacity == max_size() then New_capacity == 0 and
+            // Construct_n(New_capacity) will cause length error
+            // ^^^ to prefent type overflow
+            size_type New_capacity = (Mycapacity+1) * (Mycapacity != max_size());
+            // bad: frequent memory overload
+            // good: the ability to use the entire range of type 'size_type'
+
+            double *Old_mycont = Mycont;
+            Construct_n(New_capacity);
+            Mycapacity = New_capacity;
+
+            {
+                double *myiter = Mycont;
+                double *iter   = Old_mycont;
+                for (size_t i = 0; i < Mysize; ++i)
+                    *myiter++ = *iter++;
             }
-
-            delete[] Mycont;
-            Mycont = Cont_extended;
-            Mycapacity = Mycapacity*2 + 1;
-
             Mycont[Mysize++] = val;
+
+            delete[] Old_mycont;
         }
 
         // removes the last element
