@@ -238,15 +238,16 @@ class Vector {
             // else do nothing
         }
 
-        void print()
+        void printn()
         {
             std::cout <<
-                std::format("(size: {}, max_size: {}) ", Mysize, Mycapacity);
+                std::format("(size: {}, capacity: {}) ", Mysize, Mycapacity);
 
-            double *mycont = Mycont;
+            double *iter = Mycont;
+
             std::cout << "{ ";
             for (size_t i = 0; i < Mysize; ++i)
-                std::cout << *mycont++ << " ";
+                std::cout << *iter++ << " ";
             std::cout << "};\n";
         }
 
