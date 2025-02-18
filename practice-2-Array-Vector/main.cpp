@@ -231,11 +231,11 @@ class Vector {
         }
 
         // removes the last element
-        void pop_back()
+        void pop_back() noexcept
         {
-            if (Mysize >= 0)
+            if (Mysize > 0)
                 --Mysize;
-            // exception
+            // else do nothing
         }
 
 
