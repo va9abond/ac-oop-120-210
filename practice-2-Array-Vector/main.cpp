@@ -178,7 +178,7 @@ class Vector {
                 return Mycont[pos];
 
             Xrange_error();
-            // std::exit(EXIT_FAILURE);
+            throw ;
         }
 
         // const_reference at (size_type pos) const { }
@@ -262,139 +262,139 @@ class Vector {
 // get<pos>(array)
 
 
-class Vector_child : public Vector {
-    public:
-        using Mybase          = Vector;
-        using value_type      = Mybase::value_type;
-        using reference       = Mybase::reference;
-        using const_reference = Mybase::const_reference;
-        using size_type       = Mybase::size_type;
-
-    public:
-        Vector_child (size_t size = 100) : Vector(size)
-        {
-            std::cout << "[INFO]: Vector_child ctor\n";
-        }
-
-        ~Vector_child()
-        {
-            std::cout << "[INFO]: Vector_child dtor\n";
-        }
-
-        // XXX canonically insert/erase return iterators to pos, but iterators
-        //     are wrapped pointer, should i return raw pointers?
-        size_t erase (size_t pos = -1)
-        {
-            if (Mysize >= 0) { // most likely case
-
-                while (pos < 0)
-                    pos += this->Mysize;
-                    // pos += ::Mysize;
-
-                double *mycont = Mycont+pos;
-                size_t mysize_1 = Mysize-1; // cached // init inside for/while
-                for (size_t i = pos; i < mysize_1; ++i) {
-                    Mycont[i] = Mycont[i+1];
-                }
-                --Mysize;
-
-            }
-
-            // throw
-        }
-
-    private:
-        // search left-to-right
-        size_t find_lr (const double& val, size_t first, size_t last)
-        { // [!] first <= last
-            while (first != last && Mycont[first] != val)
-                ++first;
-
-            return first;
-        }
-
-        size_t find_rl (const double& val, size_t first, size_t last)
-        { // [!] first >= last
-            first -= 1 * (first == Mysize);
-
-            while (first != last && Mycont[first] != val)
-                --first;
-
-            return first;
-        }
-
-    public:
-        // XXX function-changer iter as a param
-        // search from start: first = 0, last = Mysize
-        // search from end:   first = Mysize, last = 0 (first > last)
-        // search in range [begin, end): first = begin, last = end (begin <= end)
-        // search in range (begin, end]: first = begin, last = end (begin >= end)
-        // but search in range (begin, end) if first == Mysize
-        size_t find (const double& val, size_t first = 0, size_t last = Mysize)
-        {
-            // TODO check if range is valid
-            return (first < last) ? find_lr(val, first, last) : find_rl(val, first, last);
-        }
-
-        size_t insert (size_t pos, const double& val)
-        {
-            if (Mysize >= Mycapacity-1) { // rare case
-                double *Cont_extended = new double[Mycapacity*2 + 1]; // +1 if Mycapacity == 0
-                for (size_t i = 0; i < pos; ++i) {
-                    Cont_extended[i] = Mycont[i];
-                }
-
-                // Cont_extended[pos] = val;
-
-                for (size_t i = pos+1; i <= Mysize; ++i)
-                    Cont_extended[i] = Mycont[i-1];
-
-                delete[] Mycont;
-                Mycont = Cont_extended;
-                Mycapacity = Mycapacity*2 + 1;
-            }
-
-            for (size_t i = Mysize; i > pos; --i)
-                Mycont[i] = Mycont[i-1];
-
-            Mycont[pos] = val;
-            ++Mysize;
-        }
-
-        // range = [first, last)
-        Vector_child slice (size_t first, size_t last)
-        {
-            // assert(first > last);
-            size_t size = last - first;
-            Vector_child sub_vector(size) ;
-
-            double *cont = sub_vector.Mycont;
-            for (size_t i = 0; i < size; ++i)
-                cont[i] = this->Mycont[i+first];
-            Mysize = size;
-
-            return sub_vector;
-        }
-
-        // Vector_child slice (size_t first, size_t size)
-        // {
-        //     // assert(size > 0);
-        //
-        // }
-
-        Vector_child& operator+= (const double rhs)
-        {
-            this->push(rhs);
-            return *this;
-        }
-};
-
-Vector_child operator+ (const Vector_child& lhs, const double rhs)
-{
-    Vector_child v {lhs};
-    v += rhs;
-    return v;
-}
+// class Vector_child : public Vector {
+//     public:
+//         using Mybase          = Vector;
+//         using value_type      = Mybase::value_type;
+//         using reference       = Mybase::reference;
+//         using const_reference = Mybase::const_reference;
+//         using size_type       = Mybase::size_type;
+//
+//     public:
+//         Vector_child (size_t size = 100) : Vector(size)
+//         {
+//             std::cout << "[INFO]: Vector_child ctor\n";
+//         }
+//
+//         ~Vector_child()
+//         {
+//             std::cout << "[INFO]: Vector_child dtor\n";
+//         }
+//
+//         // XXX canonically insert/erase return iterators to pos, but iterators
+//         //     are wrapped pointer, should i return raw pointers?
+//         size_t erase (size_t pos = -1)
+//         {
+//             if (Mysize >= 0) { // most likely case
+//
+//                 while (pos < 0)
+//                     pos += this->Mysize;
+//                     // pos += ::Mysize;
+//
+//                 double *mycont = Mycont+pos;
+//                 size_t mysize_1 = Mysize-1; // cached // init inside for/while
+//                 for (size_t i = pos; i < mysize_1; ++i) {
+//                     Mycont[i] = Mycont[i+1];
+//                 }
+//                 --Mysize;
+//
+//             }
+//
+//             // throw
+//         }
+//
+//     private:
+//         // search left-to-right
+//         size_t find_lr (const double& val, size_t first, size_t last)
+//         { // [!] first <= last
+//             while (first != last && Mycont[first] != val)
+//                 ++first;
+//
+//             return first;
+//         }
+//
+//         size_t find_rl (const double& val, size_t first, size_t last)
+//         { // [!] first >= last
+//             first -= 1 * (first == Mysize);
+//
+//             while (first != last && Mycont[first] != val)
+//                 --first;
+//
+//             return first;
+//         }
+//
+//     public:
+//         // XXX function-changer iter as a param
+//         // search from start: first = 0, last = Mysize
+//         // search from end:   first = Mysize, last = 0 (first > last)
+//         // search in range [begin, end): first = begin, last = end (begin <= end)
+//         // search in range (begin, end]: first = begin, last = end (begin >= end)
+//         // but search in range (begin, end) if first == Mysize
+//         size_t find (const double& val, size_t first = 0, size_t last = Mysize)
+//         {
+//             // TODO check if range is valid
+//             return (first < last) ? find_lr(val, first, last) : find_rl(val, first, last);
+//         }
+//
+//         size_t insert (size_t pos, const double& val)
+//         {
+//             if (Mysize >= Mycapacity-1) { // rare case
+//                 double *Cont_extended = new double[Mycapacity*2 + 1]; // +1 if Mycapacity == 0
+//                 for (size_t i = 0; i < pos; ++i) {
+//                     Cont_extended[i] = Mycont[i];
+//                 }
+//
+//                 // Cont_extended[pos] = val;
+//
+//                 for (size_t i = pos+1; i <= Mysize; ++i)
+//                     Cont_extended[i] = Mycont[i-1];
+//
+//                 delete[] Mycont;
+//                 Mycont = Cont_extended;
+//                 Mycapacity = Mycapacity*2 + 1;
+//             }
+//
+//             for (size_t i = Mysize; i > pos; --i)
+//                 Mycont[i] = Mycont[i-1];
+//
+//             Mycont[pos] = val;
+//             ++Mysize;
+//         }
+//
+//         // range = [first, last)
+//         Vector_child slice (size_t first, size_t last)
+//         {
+//             // assert(first > last);
+//             size_t size = last - first;
+//             Vector_child sub_vector(size) ;
+//
+//             double *cont = sub_vector.Mycont;
+//             for (size_t i = 0; i < size; ++i)
+//                 cont[i] = this->Mycont[i+first];
+//             Mysize = size;
+//
+//             return sub_vector;
+//         }
+//
+//         // Vector_child slice (size_t first, size_t size)
+//         // {
+//         //     // assert(size > 0);
+//         //
+//         // }
+//
+//         Vector_child& operator+= (const double rhs)
+//         {
+//             this->push(rhs);
+//             return *this;
+//         }
+// };
+//
+// Vector_child operator+ (const Vector_child& lhs, const double rhs)
+// {
+//     Vector_child v {lhs};
+//     v += rhs;
+//     return v;
+// }
 
 // =======
 // ROADMAP
@@ -434,3 +434,22 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [ ] Vector_child slice (size_type, size_type)
 // [ ] Vector_chile& operator+= (const value_type&)
 // [ ] Vector_child operator+ (const Vector_child&, const value_type&)
+
+int main (void)
+{
+    Vector v(10);
+
+    for (int i = 0; i < 10; ++i)
+        v.push_back( (double)i );
+
+    v.printn();
+
+    v.pop_back();
+    v.pop_back();
+    v.pop_back();
+    v.pop_back();
+
+    v.printn();
+
+    return 0;
+}
