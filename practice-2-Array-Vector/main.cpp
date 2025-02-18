@@ -199,7 +199,8 @@ class Vector {
                 return ;
             }
 
-            size_type CAPACITY_STEP = max_size() / 50; // magic variable
+            // size_type CAPACITY_STEP = max_size() / 50000000...; // magic variable
+            size_type CAPACITY_STEP = 50; // magic variable
             size_type New_capacity = 0;
             size_type diff = max_size() - Mycapacity;
             if (diff > CAPACITY_STEP) {
@@ -444,12 +445,34 @@ int main (void)
 
     v.printn();
 
+    v.push_back(21);
+    v.push_back(55);
+
+    v.printn();
+
     v.pop_back();
     v.pop_back();
     v.pop_back();
     v.pop_back();
 
     v.printn();
+
+    Vector u(v);
+    u.printn();
+
+    Vector h{};
+    h.printn();
+
+    h = u;
+    h.printn();
+
+    std::cout << std::format("h.at(4) = {}\n", h.at(4));
+    std::cout << std::format("h[4] = {}\n", h[4]);
+
+    double g[] = {23, 23, 42, 8024, 20};
+    Vector p(g, std::size(g));
+    p.printn();
+
 
     return 0;
 }
