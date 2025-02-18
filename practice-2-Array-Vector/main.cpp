@@ -272,9 +272,12 @@ class Vector_child : public Vector {
         using size_type       = Mybase::size_type;
 
     public:
-        Vector_child (size_t size = 100) : Vector(size)
+        explicit Vector_child (size_type count = 100) : Vector(count)
         {
-            std::cout << "[INFO]: Vector_child ctor\n";
+#if DEBUG_INFO_LEVEL == 1
+            std::cout <<
+                std::format("[INFO]: Vector_child::Vector_child(size_type count = {})\n", count);
+#endif
         }
 
         ~Vector_child()
@@ -425,7 +428,7 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 //
 //
 // >>> Vector_child
-// [ ] Vector_child (size_type)
+// [x] Vector_child (size_type)
 // [ ] ~Vector_child()
 // [ ] size_type erase (size_type)
 // [ ] size_type insert (size_type, const value_type&)
