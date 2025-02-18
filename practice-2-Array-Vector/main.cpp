@@ -57,8 +57,6 @@ class Vector {
         // allocate non-zero memory for 'Mycont'
         void Buy_nonzero (const size_type new_capacity)
         {
-            Mycont = nullptr;
-
             if (new_capacity <= max_size() && new_capacity > 0) {
                 Mycont = new value_type[new_capacity];
                 return ;
@@ -411,9 +409,10 @@ Vector_child operator+ (const Vector_child& lhs, const double rhs)
 // [ ] const_reference at (size_type) const
 // [x] reference operator[] (size_type pos)
 // [ ] const_reference operator[] (size_type pos) const
-// [ ] void push_back (const value_type&)
+// [x] void push_back (const value_type&)
 // [ ] void pop_back ()
 // [ ] print()
+//
 //
 // >>> Vector_child
 // [ ] Vector_child (size_type)
