@@ -445,7 +445,8 @@ class Vector_child : public Vector {
         }
 };
 
-Vector_child operator+ (const Vector_child& lhs, const double rhs)
+Vector_child operator+ (const Vector_child& lhs,
+                        const Vector_child::value_type rhs)
 {
     Vector_child v {lhs};
     v += rhs;
