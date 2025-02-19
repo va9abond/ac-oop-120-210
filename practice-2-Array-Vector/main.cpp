@@ -369,6 +369,7 @@ class Vector_child : public Vector {
                 }
                 // *const_cast<pointer>(where) = val;
                 *iter = val;
+                return iter;
 
                 // VER.2 - indexes (safer)
                 // for (size_type i = Mysize; i > pos; --i)
@@ -404,6 +405,7 @@ class Vector_child : public Vector {
             }
 
             delete[] Old_mycont;
+            return const_cast<pointer>(where);
         }
 
         // range = [first, last)
