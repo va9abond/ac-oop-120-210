@@ -41,7 +41,7 @@ class Vector {
             Construct_n(count, val);
         }
 
-    private:
+    protected:
         static void Xlength_error() {
             std::cout << "\033[" << "[ERROR]: vector too long" << "\033[m" << '\n';
             std::exit(EXIT_FAILURE);
@@ -354,29 +354,53 @@ class Vector_child : public Vector {
             return (first < last) ? find_lr(val, first, last) : find_rl(val, first, last);
         }
 
-        size_t insert (size_t pos, const double& val)
+        // insert val at where
+        pointer insert (const_pointer where, const_reference val)
         {
-            if (Mysize >= Mycapacity-1) { // rare case
-                double *Cont_extended = new double[Mycapacity*2 + 1]; // +1 if Mycapacity == 0
-                for (size_t i = 0; i < pos; ++i) {
-                    Cont_extended[i] = Mycont[i];
+            if (Mysize < Mycapacity) { // most likely case
+                // VER.1 - raw pointers (fuuny, but dangerous)
+                pointer iter = Mycont+Mysize;
+                while (iter != where) {
+                    *iter = *(iter-1);
+                    --iter;
                 }
+                // *const_cast<pointer>(where) = val;
+                *iter = val;
 
-                // Cont_extended[pos] = val;
-
-                for (size_t i = pos+1; i <= Mysize; ++i)
-                    Cont_extended[i] = Mycont[i-1];
-
-                delete[] Mycont;
-                Mycont = Cont_extended;
-                Mycapacity = Mycapacity*2 + 1;
+                // VER.2 - indexes (safer)
+                // for (size_type i = Mysize; i > pos; --i)
+                //     Mycont[i] = Mycont[i-1];
+                // Mycont[pos] = val;
             }
 
-            for (size_t i = Mysize; i > pos; --i)
-                Mycont[i] = Mycont[i-1];
+            size_type CAPACITY_STEP = 50; // magic variable
+            size_type New_capacity = 0;
+            size_type diff = max_size() - Mycapacity;
+            if (diff > CAPACITY_STEP) {
+                New_capacity = Mycapacity + CAPACITY_STEP;
+            } else if (diff > 0) {
+                New_capacity = Mycapacity + 1;
+            }
 
-            Mycont[pos] = val;
-            ++Mysize;
+            pointer Old_mycont = Mycont;
+            Construct_n(New_capacity);
+            Mycapacity = New_capacity;
+
+            {
+                pointer myiter = Mycont;
+                pointer iter   = Old_mycont;
+                for (; iter != where; ++iter)
+                    *myiter++ = *iter++;
+
+                *myiter++ = val;
+
+                for (pointer end = Old_mycont+Mysize; iter != end; ++iter)
+                    *myiter++ = *iter++;
+
+                ++Mysize;
+            }
+
+            delete[] Old_mycont;
         }
 
         // range = [first, last)
