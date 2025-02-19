@@ -323,35 +323,38 @@ class Vector_child : public Vector {
 
     private:
         // search left-to-right
-        size_t find_lr (const double& val, size_t first, size_t last)
-        { // [!] first <= last
-            while (first != last && Mycont[first] != val)
+        size_type find_lr (const_reference val, size_type first, size_type last)
+        {
+            while (first < last) {
+                if (Mycont[first] == val)
+                    break;
                 ++first;
+            }
 
             return first;
         }
 
-        size_t find_rl (const double& val, size_t first, size_t last)
-        { // [!] first >= last
-            first -= 1 * (first == Mysize);
+        size_type find_rl (const_reference val, size_type first, size_type last)
+        {
+            while (last >= first) {
+                if (Mycont[last] == val)
+                    break;
+                --last;
+            }
 
-            while (first != last && Mycont[first] != val)
-                --first;
-
-            return first;
+            return last;
         }
 
     public:
-        // XXX function-changer iter as a param
-        // search from start: first = 0, last = Mysize
-        // search from end:   first = Mysize, last = 0 (first > last)
-        // search in range [begin, end): first = begin, last = end (begin <= end)
-        // search in range (begin, end]: first = begin, last = end (begin >= end)
-        // but search in range (begin, end) if first == Mysize
-        size_t find (const double& val, size_t first = 0, size_t last = Mysize)
+        size_type find (const_reference& val,
+                size_type first, size_type last, bool lr_direction = true)
         {
-            // TODO check if range is valid
-            return (first < last) ? find_lr(val, first, last) : find_rl(val, first, last);
+            // check if [first, last) in [Mycont, Mycont+Mysize) and first < last
+            if (Mycont+first < Mycont || Mycont+last > Mycont+Mysize || first > last) {
+                Xrange_error();
+            } // rare case
+
+            return (lr_direction) ? find_lr(val, first, last) : find_rl(val, first, last);
         }
 
         // insert val at where
