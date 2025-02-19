@@ -361,7 +361,7 @@ class Vector_child : public Vector {
         }
 
     private:
-        // search left-to-right
+        // search left-to-right // XXX what if not found
         size_type find_lr (const_reference val, size_type first, size_type last)
         {
             while (first < last) {
@@ -373,6 +373,7 @@ class Vector_child : public Vector {
             return first;
         }
 
+        // XXX what if not found
         size_type find_rl (const_reference val, size_type first, size_type last)
         {
             while (last >= first) {
@@ -385,6 +386,7 @@ class Vector_child : public Vector {
         }
 
     public:
+        // XXX what if not found
         size_type find (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true)
         {
@@ -481,12 +483,13 @@ class Vector_child : public Vector {
             if (count > Mysize-pos)
                 Xrange_error();
 
-            Vector_child sub_vector(count) ;
+            Vector_child sub_vector(count);
 
-            pointer sub_iter = sub_vector.Mycont;
-            pointer myiter = Mycont+pos;
-            for (size_t i = 0; i < count; ++i)
-                *sub_iter++ = *myiter++;
+            sub_vector.Assign_counted_range(Mycont+pos, count);
+            // pointer sub_iter = sub_vector.Mycont;
+            // pointer myiter = Mycont+pos;
+            // for (size_t i = 0; i < count; ++i)
+            //     *sub_iter++ = *myiter++;
 
             return sub_vector;
         }
@@ -661,8 +664,8 @@ int main (void)
     vc.slice(2, 8).printn();
     printn("");
 
-    printn("[TEST]: vc.slice_by_count(4, 10).printn()");
-    vc.slice_by_count(4, 10).printn();
+    printn("[TEST]: vc.slice_by_count(4, 8).printn()");
+    vc.slice_by_count(4, 8).printn();
     printn("");
 
     printn("[TEST]: vc.operator+=( (double)55 )");
