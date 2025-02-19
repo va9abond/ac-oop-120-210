@@ -406,14 +406,15 @@ class Vector_child : public Vector {
                     *iter = *(iter-1);
                     --iter;
                 }
-                // *const_cast<pointer>(where) = val;
-                *iter = val;
+                *const_cast<pointer>(where) = val; // *iter = val;
+                ++Mysize;
                 return iter;
 
                 // VER.2 - indexes (safer)
                 // for (size_type i = Mysize; i > pos; --i)
                 //     Mycont[i] = Mycont[i-1];
                 // Mycont[pos] = val;
+                // ++Mysize;
             }
 
             size_type CAPACITY_STEP = 50; // magic variable
@@ -425,26 +426,31 @@ class Vector_child : public Vector {
                 New_capacity = Mycapacity + 1;
             }
 
-            pointer Old_mycont = Mycont;
-            Construct_n(New_capacity);
+            pointer Old_mycont = Vector::Mycont;
+            pointer New_where = nullptr;
+            Vector::Construct_n(New_capacity);
             Mycapacity = New_capacity;
 
             {
                 pointer myiter = Mycont;
                 pointer iter   = Old_mycont;
-                for (; iter != where; ++iter)
+
+                while (iter < where) // (iter < where) is safer than (iter != where)
                     *myiter++ = *iter++;
 
+                New_where = myiter;
                 *myiter++ = val;
 
-                for (pointer end = Old_mycont+Mysize; iter != end; ++iter)
+                // iter == where
+                pointer end = Old_mycont+Mysize;
+                while (iter < end) // (iter < end) is safer than (iter != end)
                     *myiter++ = *iter++;
-
-                ++Mysize;
             }
 
+            ++Mysize;
             delete[] Old_mycont;
-            return const_cast<pointer>(where);
+
+            return New_where;
         }
 
         // range = [first, last)
@@ -538,53 +544,146 @@ Vector_child operator+ (const Vector_child& lhs,
 // [x] Vector_child operator+ (const Vector_child&, const value_type&)
 
 
-// void printn (const std::string_view& str, std::ostream& os = std::cout)
-// {
-//     // use '\n' and not std::endl to not flushing std::ostream
-//     os << str << '\n';
-// }
+void printn (const std::string_view& str, std::ostream& os = std::cout)
+{
+    // use '\n' and not std::endl to not flushing std::ostream
+    os << str << '\n';
+}
 
 int main (void)
 {
-    // printn("=== TESTING BEGIN ===");
-    // printn("");
-    //
-    // printn("[TEST] : Circle c1 (1,2,3)");
-    Vector v(10);
+    printn("=== TESTING BEGIN ===");
+    printn("");
 
+
+    printn("[TEST]: Vector::Vector(size_type): Vector v(10)");
+    Vector v(10);
+    printn("");
+
+    printn("[TEST]: Vector::push_back: v.push_back(0), ..., v.push_back(9)");
     for (int i = 0; i < 10; ++i)
         v.push_back( (double)i );
-
     v.printn();
+    printn("");
 
+    printn("[TEST]: Vector::push_back: v.push_back(21)");
     v.push_back(21);
+    v.printn();
+    printn("");
+
+    printn("[TEST]: Vector::push_back: v.push_back(55)");
     v.push_back(55);
-
     v.printn();
+    printn("");
 
+    printn("[TEST]: Vector::pop_back: 4*v.pop_back()");
     v.pop_back();
     v.pop_back();
     v.pop_back();
     v.pop_back();
-
     v.printn();
+    printn("");
 
+    printn("[TEST]: Vector::Vector(const Vector&): Vector u(v)");
     Vector u(v);
     u.printn();
+    printn("");
 
+    printn("[TEST]: Vector::Vector(size_type): Vector h{}");
     Vector h{};
     h.printn();
+    printn("");
 
+    printn("[TEST]: Vector::operator=(const Vector&): h = u");
     h = u;
     h.printn();
+    printn("");
 
-    std::cout << std::format("h.at(4) = {}\n", h.at(4));
-    std::cout << std::format("h[4] = {}\n", h[4]);
+    std::cout << std::format("[TEST]: h.at(4) = {}\n", h.at(4));
+    printn("");
+    std::cout << std::format("[TEST]: h[4] = {}\n", h[4]);
+    printn("");
 
+    printn("[TEST]: Vector::Vector(double *, size_type): g[] = {23, 23, 42, 8024, 20} and Vector p(g, std::size(g))");
     double g[] = {23, 23, 42, 8024, 20};
     Vector p(g, std::size(g));
     p.printn();
+    printn("");
 
 
+    printn("[TEST]: Vector_child::Vector_child(size_type): Vector_child vc(10)");
+    Vector_child vc(10);
+    printn("");
+
+    printn("[TEST]: vc.push_back(0), ..., vc.push_back(9)");
+    for (int i = 0; i < 10; ++i)
+        vc.push_back( (double)i );
+    vc.printn();
+    printn("");
+
+    double *iter = &vc.at(4);
+    printn("[TEST]: erase(&vc.at(4))");
+    vc.erase(iter);
+    vc.printn();
+    printn("");
+
+    iter = &vc.at(vc.size()-1);
+    printn("[TEST]: erase(&vc.at(vc.size()-1))");
+    vc.erase(iter);
+    vc.printn();
+    printn("");
+
+    iter = &vc[4];
+    printn("[TEST]: insert(28, &vc[4])");
+    iter = vc.insert(iter, 28);
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: insert(29, &vc[4])");
+    iter = vc.insert(iter, 29);
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: insert(30, &vc[4])");
+    iter = vc.insert(iter, 30);
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: insert(31, &vc[4])");
+    iter = vc.insert(iter, 31);
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: vc.slice(2, 8).printn()");
+    vc.slice(2, 8).printn();
+    printn("");
+
+    printn("[TEST]: vc.slice_by_count(4, 10).printn()");
+    vc.slice_by_count(4, 10).printn();
+    printn("");
+
+    printn("[TEST]: vc.operator+=( (double)55 )");
+    vc += (double)55;
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: vc.operator+=( (double)33 )");
+    vc += (double)33;
+    vc.printn();
+    printn("");
+
+    printn("[TEST]: vc.operator+=( (double)101 )");
+    vc += (double)101;
+    vc.printn();
+    printn("");
+
+    std::cout << std::format("[TEST]: vc.find(101, 0, vc.size()) = {}\n", vc.find(101, 0, vc.size()));
+    printn("");
+    std::cout << std::format("[TEST]: vc.find(55, 0, vc.size()) = {}\n", vc.find(55, 0, vc.size()));
+    printn("");
+
+
+    printn("");
+    printn("=== TESTING END ===");
     return 0;
 }
