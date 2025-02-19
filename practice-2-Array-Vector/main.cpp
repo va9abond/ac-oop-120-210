@@ -192,7 +192,7 @@ class Vector {
         // const_reference operator[] (size_type pos) const { }
 
         // adds an element to the end
-        void push_back (double val)
+        void push_back (value_type val)
         {
             if (Mysize < Mycapacity) { // most likely case
                 Mycont[Mysize++] = val;
@@ -438,9 +438,9 @@ class Vector_child : public Vector {
             return sub_vector;
         }
 
-        Vector_child& operator+= (const double rhs)
+        Vector_child& operator+= (const value_type rhs)
         {
-            this->push(rhs);
+            Vector::push_back(rhs);
             return *this;
         }
 };
