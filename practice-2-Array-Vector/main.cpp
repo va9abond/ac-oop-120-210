@@ -404,16 +404,20 @@ class Vector_child : public Vector {
         }
 
         // range = [first, last)
-        Vector_child slice (size_t first, size_t last)
+        Vector_child slice (size_type first, size_type last)
         {
-            // assert(first > last);
-            size_t size = last - first;
+            // check if [first, last) in [Mycont, Mycont+Mysize) and first < last
+            if (Mycont+first < Mycont || Mycont+last > Mycont+Mysize || first > last) {
+                Xrange_error();
+            } // rare case
+
+            size_type size = last - first;
             Vector_child sub_vector(size) ;
 
-            double *cont = sub_vector.Mycont;
-            for (size_t i = 0; i < size; ++i)
-                cont[i] = this->Mycont[i+first];
-            Mysize = size;
+            pointer sub_iter = sub_vector.Mycont;
+            pointer myiter = Mycont+first;
+            for (pointer myend = Mycont+last; myiter != myend; ++myiter)
+                *sub_iter++ = *myiter++;
 
             return sub_vector;
         }
