@@ -422,11 +422,21 @@ class Vector_child : public Vector {
             return sub_vector;
         }
 
-        // Vector_child slice (size_t first, size_t size)
-        // {
-        //     // assert(size > 0);
-        //
-        // }
+        // range [pos, pos+count)
+        Vector_child slice_by_count (size_type pos, size_type count)
+        {
+            if (count > Mysize-pos)
+                Xrange_error();
+
+            Vector_child sub_vector(count) ;
+
+            pointer sub_iter = sub_vector.Mycont;
+            pointer myiter = Mycont+pos;
+            for (size_t i = 0; i < count; ++i)
+                *sub_iter++ = *myiter++;
+
+            return sub_vector;
+        }
 
         Vector_child& operator+= (const double rhs)
         {
