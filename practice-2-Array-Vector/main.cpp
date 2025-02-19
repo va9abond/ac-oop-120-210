@@ -464,10 +464,13 @@ class Vector_child : public Vector {
             size_type size = last - first;
             Vector_child sub_vector(size) ;
 
-            pointer sub_iter = sub_vector.Mycont;
-            pointer myiter = Mycont+first;
-            for (pointer myend = Mycont+last; myiter != myend; ++myiter)
-                *sub_iter++ = *myiter++;
+            sub_vector.Assign_counted_range(Mycont+first, size);
+            // pointer sub_iter = sub_vector.Mycont;
+            // pointer myiter = Mycont+first;
+            // pointer myend = Mycont+last;
+            // while (myiter < myend)
+            //     *sub_iter++ = *myiter++;
+            // sub_vector.Mysize = size;
 
             return sub_vector;
         }
