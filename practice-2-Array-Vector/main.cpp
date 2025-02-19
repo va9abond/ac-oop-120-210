@@ -123,6 +123,32 @@ class Vector {
             Assign_counted_range(other, size);
         }
 
+
+// ========================
+// BEGIN RULE OF FIVE (RoF)
+// ========================
+
+// [RoF] I. Copy constructor
+        Vector (const Vector& other)
+        {
+            Construct_n(other.Mycapacity);
+            Mycapacity = other.Mycapacity;
+
+            Assign_counted_range(other.Mycont, other.Mysize);
+        }
+
+// [RoF] II. Move constructor
+        Vector (Vector&& other)
+        {
+            Mycapacity = other.Mycapacity;
+            Mysize = other.Mysize;
+            Mycont = other.Mycont;
+
+            other.Mycont = nullptr;
+            other.Tidy();
+        }
+
+// [RoF] III. Copy assignment operator
         Vector& operator= (const Vector& rhs)
         {
             if (this != &rhs) {
@@ -138,14 +164,22 @@ class Vector {
             return *this;
         }
 
-        Vector (const Vector& other)
+// [RoF] IV. Move assignment operator
+        Vector& operator= (Vector&& other)
         {
-            Construct_n(other.Mycapacity);
-            Mycapacity = other.Mycapacity;
+            Tidy();
 
-            Assign_counted_range(other.Mycont, other.Mysize);
+            Mycapacity = other.Mycapacity;
+            Mysize = other.Mysize;
+            Mycont = other.Mycont;
+
+            other.Mycont = nullptr;
+            other.Tidy();
+
+            return *this;
         }
 
+// [RoF] V. Destructor
         ~Vector()
         {
 #if DEBUG_INFO_LEVEL == 1
@@ -154,6 +188,11 @@ class Vector {
 #endif
             Tidy();
         }
+
+// ======================
+// END RULE OF FIVE (RoF)
+// ======================
+
 
         constexpr size_type size() const noexcept
         {
@@ -458,6 +497,7 @@ Vector_child operator+ (const Vector_child& lhs,
     return v;
 }
 
+
 // =======
 // ROADMAP
 // =======
@@ -471,7 +511,7 @@ Vector_child operator+ (const Vector_child& lhs,
 // [x] Vector (double*, size_type)
 // [x] Vector& operator= (const Vector&)
 // [x] Vector (const Vector&)
-// [ ] Rule of five
+// [x] Rule of five
 // [x] ~Vector()
 // [x] size_type size()
 // [x] size_type max_size()
@@ -487,18 +527,29 @@ Vector_child operator+ (const Vector_child& lhs,
 //
 // >>> Vector_child
 // [x] Vector_child (size_type)
-// [ ] ~Vector_child()
-// [ ] size_type erase (size_type)
-// [ ] size_type insert (size_type, const value_type&)
-// [ ] size_type find_lr (const value_type&, size_type, size_type)
-// [ ] size_type find_rl (const value_type&, size_type, size_type)
-// [ ] size_type find (const value_type)
-// [ ] Vector_child slice (size_type, size_type)
-// [ ] Vector_chile& operator+= (const value_type&)
-// [ ] Vector_child operator+ (const Vector_child&, const value_type&)
+// [x] ~Vector_child()
+// [x] size_type erase (size_type)
+// [x] size_type insert (size_type, const value_type&)
+// [x] size_type find_lr (const value_type&, size_type, size_type)
+// [x] size_type find_rl (const value_type&, size_type, size_type)
+// [x] size_type find (const value_type)
+// [x] Vector_child slice (size_type, size_type)
+// [x] Vector_chile& operator+= (const value_type&)
+// [x] Vector_child operator+ (const Vector_child&, const value_type&)
+
+
+// void printn (const std::string_view& str, std::ostream& os = std::cout)
+// {
+//     // use '\n' and not std::endl to not flushing std::ostream
+//     os << str << '\n';
+// }
 
 int main (void)
 {
+    // printn("=== TESTING BEGIN ===");
+    // printn("");
+    //
+    // printn("[TEST] : Circle c1 (1,2,3)");
     Vector v(10);
 
     for (int i = 0; i < 10; ++i)
