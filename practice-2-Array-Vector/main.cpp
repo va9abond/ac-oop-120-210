@@ -550,8 +550,26 @@ class Vector_child_sorted : public Vector_child {
             return Vector_child::insert(iter, val);
         }
 
+        size_type find (const_reference& val,
+                size_type first, size_type last, bool lr_direction = true) = delete;
 
+        // bin search in range [first, last)
+        size_type search (const_reference& val, size_type first, size_type last)
+        {
+            size_type left  = first;
+            size_type right = last;
+            size_type mid   = left + (right-left)/2;
 
+            while (left < right) {
+                if (Mycont[mid] == val) { return mid; }
+                else if (Mycont[mid] > val) { right = mid; }
+                else { left = mid+1; }
+
+                mid = left + (right-left)/2;
+            }
+
+            return last;
+        }
 };
 
 // =======
@@ -775,6 +793,27 @@ int main (void)
     iter2 = vcs.insert(31);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
+    printn("");
+
+    size_t pos = 0;
+    printn("[TEST]: pos = vcs.search(31)");
+    pos = vcs.search(31, 0, vcs.size());
+    std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
+    printn("");
+
+    printn("[TEST]: pos = vcs.search(9)");
+    pos = vcs.search(9, 0, vcs.size());
+    std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
+    printn("");
+
+    printn("[TEST]: pos = vcs.search(0)");
+    pos = vcs.search(0, 0, vcs.size());
+    std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
+    printn("");
+
+    printn("[TEST]: pos = vcs.search(4)");
+    pos = vcs.search(4, 0, vcs.size());
+    std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
 
