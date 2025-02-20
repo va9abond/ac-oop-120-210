@@ -523,6 +523,37 @@ Vector_child normalize (const Vector_child &other)
 }
 
 
+class Vector_child_sorted : public Vector_child {
+    public:
+        using Mybase          = Vector_child;
+        using value_type      = Mybase::value_type;
+        using reference       = Mybase::reference;
+        using const_reference = Mybase::const_reference;
+        using size_type       = Mybase::size_type;
+        using pointer         = Mybase::pointer;
+        using const_pointer   = Mybase::const_pointer;
+
+
+    public:
+        explicit Vector_child_sorted (size_type size) : Vector_child(size) { }
+
+        pointer insert (const_pointer where, const_reference val) = delete;
+
+        template <typename Compare = std::less<value_type>>
+        pointer insert (const_reference val, Compare cmp = Compare{})
+        {
+            pointer iter = Mycont;
+            pointer end = Mycont+Mysize;
+            while (iter < end && cmp(*iter, val))
+                ++iter;
+
+            return Vector_child::insert(iter, val);
+        }
+
+
+
+};
+
 // =======
 // ROADMAP
 // =======
@@ -703,6 +734,47 @@ int main (void)
 
     printn("[TEST]: Normalize vector (task 2.2.3)");
     normalize(vc).printn();
+    printn("");
+
+    printn("[TEST]: Vector_child_sorted vcs(10))");
+    Vector_child_sorted vcs(10);
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: vcs.insert(10), ..., vcs.insert(1)");
+    for (int i = 10; i > 0; --i)
+        vcs.insert( (double)i );
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: iter2 = vcs.insert(29)");
+    auto iter2 = vcs.insert(29);
+    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: iter2 = vcs.insert(8)");
+    iter2 = vcs.insert(8);
+    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: iter2 = vcs.insert(11)");
+    iter2 = vcs.insert(11);
+    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: iter2 = vcs.insert(0)");
+    iter2 = vcs.insert(0);
+    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    vcs.printn();
+    printn("");
+
+    printn("[TEST]: iter2 = vcs.insert(31)");
+    iter2 = vcs.insert(31);
+    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    vcs.printn();
     printn("");
 
 
