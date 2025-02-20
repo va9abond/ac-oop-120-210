@@ -228,7 +228,10 @@ class Vector {
             return *(Mycont+pos);
         }
 
-        // const_reference operator[] (size_type pos) const { }
+        const_reference operator[] (size_type pos) const
+        {
+            return *(Mycont+pos);
+        }
 
         // adds an element to the end
         void push_back (value_type val)
@@ -509,6 +512,16 @@ Vector_child operator+ (const Vector_child& lhs,
     return v;
 }
 
+Vector_child normalize (const Vector_child &other)
+{
+    Vector_child result {other};
+    if (size_t size = other.size(); size > 0)
+        for (size_t i = 1; i < size-1; ++i)
+            result[i] = (other[i-1]+other[i+1])/2;
+
+    return result;
+}
+
 
 // =======
 // ROADMAP
@@ -686,6 +699,10 @@ int main (void)
     std::cout << std::format("[TEST]: vc.find(101, 0, vc.size()) = {}\n", vc.find(101, 0, vc.size()));
     printn("");
     std::cout << std::format("[TEST]: vc.find(55, 0, vc.size()) = {}\n", vc.find(55, 0, vc.size()));
+    printn("");
+
+    printn("[TEST]: Normalize vector (task 2.2.3)");
+    normalize(vc).printn();
     printn("");
 
 
