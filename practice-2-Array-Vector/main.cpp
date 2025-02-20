@@ -43,13 +43,13 @@ class Vector {
 
     protected:
         static void Xlength_error() {
-            std::cout << "\033[" << "[ERROR]: vector too long" << "\033[m" << '\n';
+            std::cout << "\033[;31;1m" << "[ERROR]: vector too long" << "\033[;0m" << '\n';
             std::exit(EXIT_FAILURE);
             // throw std::length_error(where);
         }
 
         static void Xrange_error() {
-            std::cout << "\033[" << "[ERROR]: invalid vector subscript" << "\033[m" << '\n';
+            std::cout << "\033[;31;1m" << "[ERROR]: invalid vector subscript" << "\033[;0m" << '\n';
             std::exit(EXIT_FAILURE);
             // throw std::out_of_range(where);
         }
@@ -618,33 +618,38 @@ void printn (const std::string_view& str, std::ostream& os = std::cout)
     os << str << '\n';
 }
 
+void printn_test_name (const std::string_view& test_name)
+{
+    std::cout << "\033[;1;32m" << test_name << "\033[;0m" << '\n';
+}
+
 int main (void)
 {
-    printn("=== TESTING BEGIN ===");
+    printn_test_name("\033[;32;1m=== TESTING BEGIN ===\033[;0m");
     printn("");
 
 
-    printn("[TEST]: Vector::Vector(size_type): Vector v(10)");
+    printn_test_name("[TEST]: Vector::Vector(size_type): Vector v(10)");
     Vector v(10);
     printn("");
 
-    printn("[TEST]: Vector::push_back: v.push_back(0), ..., v.push_back(9)");
+    printn_test_name("[TEST]: Vector::push_back: v.push_back(0), ..., v.push_back(9)");
     for (int i = 0; i < 10; ++i)
         v.push_back( (double)i );
     v.printn();
     printn("");
 
-    printn("[TEST]: Vector::push_back: v.push_back(21)");
+    printn_test_name("[TEST]: Vector::push_back: v.push_back(21)");
     v.push_back(21);
     v.printn();
     printn("");
 
-    printn("[TEST]: Vector::push_back: v.push_back(55)");
+    printn_test_name("[TEST]: Vector::push_back: v.push_back(55)");
     v.push_back(55);
     v.printn();
     printn("");
 
-    printn("[TEST]: Vector::pop_back: 4*v.pop_back()");
+    printn_test_name("[TEST]: Vector::pop_back: 4*v.pop_back()");
     v.pop_back();
     v.pop_back();
     v.pop_back();
@@ -652,172 +657,174 @@ int main (void)
     v.printn();
     printn("");
 
-    printn("[TEST]: Vector::Vector(const Vector&): Vector u(v)");
+    printn_test_name("[TEST]: Vector::Vector(const Vector&): Vector u(v)");
     Vector u(v);
     u.printn();
     printn("");
 
-    printn("[TEST]: Vector::Vector(size_type): Vector h{}");
+    printn_test_name("[TEST]: Vector::Vector(size_type): Vector h{}");
     Vector h{};
     h.printn();
     printn("");
 
-    printn("[TEST]: Vector::operator=(const Vector&): h = u");
+    printn_test_name("[TEST]: Vector::operator=(const Vector&): h = u");
     h = u;
     h.printn();
     printn("");
 
-    std::cout << std::format("[TEST]: h.at(4) = {}\n", h.at(4));
+    std::cout << std::format("\033[;1;32m[TEST]: h.at(4)\033[;0m = {}\n", h.at(4));
     printn("");
-    std::cout << std::format("[TEST]: h[4] = {}\n", h[4]);
+    std::cout << std::format("\033[;1;32m[TEST]: h[4]\033[;0m = {}\n", h[4]);
     printn("");
 
-    printn("[TEST]: Vector::Vector(double *, size_type): g[] = {23, 23, 42, 8024, 20} and Vector p(g, std::size(g))");
+    printn_test_name("[TEST]: Vector::Vector(double *, size_type): g[] = {23, 23, 42, 8024, 20} and Vector p(g, std::size(g))");
     double g[] = {23, 23, 42, 8024, 20};
     Vector p(g, std::size(g));
     p.printn();
     printn("");
 
 
-    printn("[TEST]: Vector_child::Vector_child(size_type): Vector_child vc(10)");
+    printn_test_name("[TEST]: Vector_child::Vector_child(size_type): Vector_child vc(10)");
     Vector_child vc(10);
     printn("");
 
-    printn("[TEST]: vc.push_back(0), ..., vc.push_back(9)");
+    printn_test_name("[TEST]: vc.push_back(0), ..., vc.push_back(9)");
     for (int i = 0; i < 10; ++i)
         vc.push_back( (double)i );
     vc.printn();
     printn("");
 
     double *iter = &vc.at(4);
-    printn("[TEST]: erase(&vc.at(4))");
+    printn_test_name("[TEST]: erase(&vc.at(4))");
     vc.erase(iter);
     vc.printn();
     printn("");
 
     iter = &vc.at(vc.size()-1);
-    printn("[TEST]: erase(&vc.at(vc.size()-1))");
+    printn_test_name("[TEST]: erase(&vc.at(vc.size()-1))");
     vc.erase(iter);
     vc.printn();
     printn("");
 
     iter = &vc[4];
-    printn("[TEST]: insert(28, &vc[4])");
+    printn_test_name("[TEST]: insert(28, &vc[4])");
     iter = vc.insert(iter, 28);
     vc.printn();
     printn("");
 
-    printn("[TEST]: insert(29, &vc[4])");
+    printn_test_name("[TEST]: insert(29, &vc[4])");
     iter = vc.insert(iter, 29);
     vc.printn();
     printn("");
 
-    printn("[TEST]: insert(30, &vc[4])");
+    printn_test_name("[TEST]: insert(30, &vc[4])");
     iter = vc.insert(iter, 30);
     vc.printn();
     printn("");
 
-    printn("[TEST]: insert(31, &vc[4])");
+    printn_test_name("[TEST]: insert(31, &vc[4])");
     iter = vc.insert(iter, 31);
     vc.printn();
     printn("");
 
-    printn("[TEST]: vc.slice(2, 8).printn()");
+    printn_test_name("[TEST]: vc.slice(2, 8).printn()");
     vc.slice(2, 8).printn();
     printn("");
 
-    printn("[TEST]: vc.slice_by_count(4, 8).printn()");
+    printn_test_name("[TEST]: vc.slice_by_count(4, 8).printn()");
     vc.slice_by_count(4, 8).printn();
     printn("");
 
-    printn("[TEST]: vc.operator+=( (double)55 )");
+    printn_test_name("[TEST]: vc.operator+=( (double)55 )");
     vc += (double)55;
     vc.printn();
     printn("");
 
-    printn("[TEST]: vc.operator+=( (double)33 )");
+    printn_test_name("[TEST]: vc.operator+=( (double)33 )");
     vc += (double)33;
     vc.printn();
     printn("");
 
-    printn("[TEST]: vc.operator+=( (double)101 )");
+    printn_test_name("[TEST]: vc.operator+=( (double)101 )");
     vc += (double)101;
     vc.printn();
     printn("");
 
-    std::cout << std::format("[TEST]: vc.find(101, 0, vc.size()) = {}\n", vc.find(101, 0, vc.size()));
+    std::cout << std::format("\033[;1;32m[TEST]: vc.find(101, 0, vc.size())\033[;0m = {}\n",
+            vc.find(101, 0, vc.size()));
     printn("");
-    std::cout << std::format("[TEST]: vc.find(55, 0, vc.size()) = {}\n", vc.find(55, 0, vc.size()));
+    std::cout << std::format("\033[;1;32m[TEST]: vc.find(55, 0, vc.size())\033[;0m = {}\n",
+            vc.find(55, 0, vc.size()));
     printn("");
 
-    printn("[TEST]: Normalize vector (task 2.2.3)");
+    printn_test_name("[TEST]: Normalize vector (task 2.2.3)");
     normalize(vc).printn();
     printn("");
 
-    printn("[TEST]: Vector_child_sorted vcs(10))");
+    printn_test_name("[TEST]: Vector_child_sorted vcs(10))");
     Vector_child_sorted vcs(10);
     vcs.printn();
     printn("");
 
-    printn("[TEST]: vcs.insert(10), ..., vcs.insert(1)");
+    printn_test_name("[TEST]: vcs.insert(10), ..., vcs.insert(1)");
     for (int i = 10; i > 0; --i)
         vcs.insert( (double)i );
     vcs.printn();
     printn("");
 
-    printn("[TEST]: iter2 = vcs.insert(29)");
+    printn_test_name("[TEST]: iter2 = vcs.insert(29)");
     auto iter2 = vcs.insert(29);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
     printn("");
 
-    printn("[TEST]: iter2 = vcs.insert(8)");
+    printn_test_name("[TEST]: iter2 = vcs.insert(8)");
     iter2 = vcs.insert(8);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
     printn("");
 
-    printn("[TEST]: iter2 = vcs.insert(11)");
+    printn_test_name("[TEST]: iter2 = vcs.insert(11)");
     iter2 = vcs.insert(11);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
     printn("");
 
-    printn("[TEST]: iter2 = vcs.insert(0)");
+    printn_test_name("[TEST]: iter2 = vcs.insert(0)");
     iter2 = vcs.insert(0);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
     printn("");
 
-    printn("[TEST]: iter2 = vcs.insert(31)");
+    printn_test_name("[TEST]: iter2 = vcs.insert(31)");
     iter2 = vcs.insert(31);
     std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
     vcs.printn();
     printn("");
 
     size_t pos = 0;
-    printn("[TEST]: pos = vcs.search(31)");
+    printn_test_name("[TEST]: pos = vcs.search(31)");
     pos = vcs.search(31, 0, vcs.size());
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn("[TEST]: pos = vcs.search(9)");
+    printn_test_name("[TEST]: pos = vcs.search(9)");
     pos = vcs.search(9, 0, vcs.size());
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn("[TEST]: pos = vcs.search(0)");
+    printn_test_name("[TEST]: pos = vcs.search(0)");
     pos = vcs.search(0, 0, vcs.size());
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn("[TEST]: pos = vcs.search(4)");
+    printn_test_name("[TEST]: pos = vcs.search(4)");
     pos = vcs.search(4, 0, vcs.size());
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
 
     printn("");
-    printn("=== TESTING END ===");
+    printn("\033[;32;1m=== TESTING END ===\033[;0m");
     return 0;
 }
