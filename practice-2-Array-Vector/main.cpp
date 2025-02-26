@@ -234,7 +234,7 @@ class MyArrayParent {
         }
 
         // adds an element to the end
-        void push_back (value_type val)
+        void push (value_type val)
         {
             if (Mysize < Mycapacity) { // most likely case
                 Mycont[Mysize++] = val;
@@ -499,7 +499,7 @@ class MyArrayChild : public MyArrayParent {
 
         MyArrayChild& operator+= (const value_type rhs)
         {
-            MyArrayParent::push_back(rhs);
+            MyArrayParent::push(rhs);
             return *this;
         }
 };
@@ -537,18 +537,58 @@ class MySortedArray : public MyArrayChild {
     public:
         explicit MySortedArray (size_type size) : MyArrayChild(size) { }
 
-        pointer InsertAt (const_pointer where, const_reference val) = delete;
+        // pointer InsertAt (const_pointer where, const_reference val) = delete;
+
+        // template <typename Compare = std::less<value_type>>
+        // pointer InsertAt (const_reference val, Compare cmp = Compare{})
+        // {
+        //     pointer iter = Mycont;
+        //     pointer end = Mycont+Mysize;
+        //
+        //     while (iter < end && cmp(*iter, val))
+        //         ++iter;
+        //
+        //     return MyArrayChild::InsertAt(iter, val);
+        // }
 
         template <typename Compare = std::less<value_type>>
-        pointer InsertAt (const_reference val, Compare cmp = Compare{})
+        void push (const_reference val, Compare cmp = Compare{})
         {
             pointer iter = Mycont;
             pointer end = Mycont+Mysize;
+
             while (iter < end && cmp(*iter, val))
                 ++iter;
 
-            return MyArrayChild::InsertAt(iter, val);
+            MyArrayChild::InsertAt(iter, val);
         }
+
+        // void push (value_type val)
+        // {
+        //     value_type inf_sup = val; // infinum or supremum
+        //     size_type pos = Mysize;
+        //
+        //     int step = 0;
+        //     while (pos == Mysize && Mysize > 0) {
+        //         pos = search(inf_sup, 0, Mysize);
+        //
+        //         ++step;
+        //         if (step % 2 == 0)
+        //             inf_sup += step;
+        //         else
+        //             inf_sup -= step;
+        //     }
+        //
+        //     pointer where = Mycont+pos;
+        //     if (Mysize > 0) {
+        //         if (step % 2 == 0) // we found supremum
+        //             where -= 1;
+        //         else               // we found infinum
+        //             where += 1;
+        //     }
+        //    
+        //     MyArrayChild::InsertAt(where, val);
+        // }
 
         size_type IndexOf (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true) = delete;
@@ -561,9 +601,9 @@ class MySortedArray : public MyArrayChild {
             size_type mid   = left + (right-left)/2;
 
             while (left < right) {
-                if (Mycont[mid] == val) { return mid; }
-                else if (Mycont[mid] > val) { right = mid; }
-                else { left = mid+1; }
+                if (Mycont[mid] == val) return mid;
+                else if (Mycont[mid] > val) right = mid;
+                else left = mid+1;
 
                 mid = left + (right-left)/2;
             }
@@ -635,17 +675,17 @@ int main (void)
 
     printn_test_name("[TEST]: Vector::push_back: v.push_back(0), ..., v.push_back(9)");
     for (int i = 0; i < 10; ++i)
-        v.push_back( (double)i );
+        v.push( (double)i );
     v.printn();
     printn("");
 
     printn_test_name("[TEST]: Vector::push_back: v.push_back(21)");
-    v.push_back(21);
+    v.push(21);
     v.printn();
     printn("");
 
     printn_test_name("[TEST]: Vector::push_back: v.push_back(55)");
-    v.push_back(55);
+    v.push(55);
     v.printn();
     printn("");
 
@@ -690,7 +730,7 @@ int main (void)
 
     printn_test_name("[TEST]: vc.push_back(0), ..., vc.push_back(9)");
     for (int i = 0; i < 10; ++i)
-        vc.push_back( (double)i );
+        vc.push( (double)i );
     vc.printn();
     printn("");
 
@@ -766,39 +806,34 @@ int main (void)
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: vcs.insert(10), ..., vcs.insert(1)");
+    printn_test_name("[TEST]: vcs.push(10), ..., vcs.push(1)");
     for (int i = 10; i > 0; --i)
-        vcs.InsertAt( (double)i );
+        vcs.push( (double)i );
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: iter2 = vcs.insert(29)");
-    auto iter2 = vcs.InsertAt(29);
-    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    printn_test_name("[TEST]: vcs.push(29)");
+    vcs.push(29);
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: iter2 = vcs.insert(8)");
-    iter2 = vcs.InsertAt(8);
-    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    printn_test_name("[TEST]: vcs.push(8)");
+    vcs.push(8);
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: iter2 = vcs.insert(11)");
-    iter2 = vcs.InsertAt(11);
-    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    printn_test_name("[TEST]: vcs.push(11)");
+    vcs.push(11);
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: iter2 = vcs.insert(0)");
-    iter2 = vcs.InsertAt(0);
-    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    printn_test_name("[TEST]: vcs.push(0)");
+    vcs.push(0);
     vcs.printn();
     printn("");
 
-    printn_test_name("[TEST]: iter2 = vcs.insert(31)");
-    iter2 = vcs.InsertAt(31);
-    std::cout << "iter2: " << iter2 << "; *iter2: " << *iter2 << '\n';
+    printn_test_name("[TEST]: vcs.push(31)");
+    vcs.push(31);
     vcs.printn();
     printn("");
 
