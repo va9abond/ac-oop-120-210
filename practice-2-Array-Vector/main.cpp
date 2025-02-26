@@ -551,44 +551,23 @@ class MySortedArray : public MyArrayChild {
         //     return MyArrayChild::InsertAt(iter, val);
         // }
 
-        template <typename Compare = std::less<value_type>>
-        void push (const_reference val, Compare cmp = Compare{})
+        void push (value_type val)
         {
-            pointer iter = Mycont;
-            pointer end = Mycont+Mysize;
+            size_type left  = 0;
+            size_type right = Mysize;
+            size_type mid   = left + (right-left)/2;
 
-            while (iter < end && cmp(*iter, val))
-                ++iter;
+            while (left < right) {
 
-            MyArrayChild::InsertAt(iter, val);
+                if (Mycont[mid] > val) right = mid;
+                else if (Mycont[mid] < val) left = mid+1;
+                else break;
+
+                mid = left + (right-left)/2;
+            }
+
+            MyArrayChild::InsertAt(Mycont+mid, val);
         }
-
-        // void push (value_type val)
-        // {
-        //     value_type inf_sup = val; // infinum or supremum
-        //     size_type pos = Mysize;
-        //
-        //     int step = 0;
-        //     while (pos == Mysize && Mysize > 0) {
-        //         pos = search(inf_sup, 0, Mysize);
-        //
-        //         ++step;
-        //         if (step % 2 == 0)
-        //             inf_sup += step;
-        //         else
-        //             inf_sup -= step;
-        //     }
-        //
-        //     pointer where = Mycont+pos;
-        //     if (Mysize > 0) {
-        //         if (step % 2 == 0) // we found supremum
-        //             where -= 1;
-        //         else               // we found infinum
-        //             where += 1;
-        //     }
-        //    
-        //     MyArrayChild::InsertAt(where, val);
-        // }
 
         size_type IndexOf (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true) = delete;
