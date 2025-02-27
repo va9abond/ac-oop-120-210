@@ -265,6 +265,16 @@ class String_child : public String {
             Mystring[Mysize] = String::NULL_S;
         }
 
+        void remove_trailing_blanks()
+        {
+            size_type right = Mysize-1;
+            while ( isspace(Mystring[right]) ) --right;
+            // now Mystring[right] point to the last non-space symbol
+
+            Mysize = right+1;
+            Mystring[Mysize] = NULL_S;
+        }
+
         static bool isspace(const value_type ch)
         {
             unsigned char c = static_cast<unsigned char>(ch);
@@ -316,14 +326,21 @@ int main (void)
     sc.printn();
 
     // test trim
-    sc = "   one two  three          ";
-    sc.printn(); sc.trim(); sc.printn();
+    // sc = "   one two  three          ";
+    // sc.printn(); sc.trim(); sc.printn();
+    //
+    // sc = "   one two  three          -";
+    // sc.printn(); sc.trim(); sc.printn();
+    //
+    // sc = "-   one two  three          ";
+    // sc.printn(); sc.trim(); sc.printn();
 
-    sc = "   one two  three          -";
-    sc.printn(); sc.trim(); sc.printn();
+    // test remove_trailing_blanks
+    sc = "- one two three    ";
+    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
 
-    sc = "-   one two  three          ";
-    sc.trim(); sc.printn();
+    sc = "one two three ";
+    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
 
     return 0;
 }
