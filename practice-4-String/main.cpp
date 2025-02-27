@@ -56,14 +56,13 @@ class String { // stl: typedef string string_base<char>
             return *this;
         }
 
-        String (const_pointer other)
+        String (const_pointer str)
             : Myreserved(0)
             , Mycapacity(0)
             , Mysize(0)
             , Mystring(nullptr)
         {
-            std::cout << "String (const_pointer other): " << other << '\n';
-            if (pointer iter = const_cast<pointer>(other); iter != nullptr) {
+            if (pointer iter = const_cast<pointer>(str); iter != nullptr) {
                 size_type size = 0;
                 while (*iter++ != '\0') ++size;
 
@@ -72,11 +71,27 @@ class String { // stl: typedef string string_base<char>
                 Mysize = size;
 
                 pointer myiter = Mystring;
-                iter = const_cast<pointer>(other);
+                iter = const_cast<pointer>(str);
                 while ( (*myiter++ = *iter++) != '\0' ) ;
 
                 *(Mystring+Mysize) = NULL_S;
             }
+        }
+
+        String& operator= (const_pointer str)
+        {
+            size_type str_size = size(str);
+            if (Mycapacity < str_size) {
+                Tidy();
+                Construct_n(str_size);
+            } // most likely case ^^^
+
+            Mysize = str_size;
+            pointer iter = const_cast<pointer>(str);
+            pointer myiter = Mystring;
+            while ( (*myiter++ = *iter++) != '\0' ) ;
+
+            return *this;
         }
 
         ~String()
@@ -84,7 +99,7 @@ class String { // stl: typedef string string_base<char>
             Tidy();
         }
 
-    private:
+    protected:
         static void Xlength_error() {
             std::cout << "\033[;31;1m" << "[ERROR]: vector too long" << "\033[;0m" << '\n';
             std::exit(EXIT_FAILURE);
@@ -125,6 +140,15 @@ class String { // stl: typedef string string_base<char>
             Mysize = 0;
             Mycapacity = 0;
             Myreserved = 0;
+        }
+
+        static size_type size (const_pointer str)
+        {
+            size_type size = 0;
+            pointer iter = const_cast<pointer>(str);
+            while (*iter++ != '\0') ++size;
+
+            return size;
         }
 
     public:
@@ -201,6 +225,22 @@ class String_child : public String {
         using const_reference = Mybase::const_reference;
 
     public:
+        String_child& operator= (const_pointer str)
+        {
+            size_type str_size = size(str);
+            if (Mycapacity < str_size) {
+                Tidy();
+                Construct_n(str_size);
+            } // most likely case ^^^
+
+            Mysize = str_size;
+            pointer iter = const_cast<pointer>(str);
+            pointer myiter = Mystring;
+            while ( (*myiter++ = *iter++) != '\0' ) ;
+
+            return *this;
+        }
+
         void reverse()
         {
             pointer left  = Mystring;
@@ -209,6 +249,31 @@ class String_child : public String {
                 swap(left, right);
                 ++left; --right;
             }
+        }
+
+        void trim()
+        {
+            size_type left = 0;
+            size_type right = Mysize-1;
+            while ( isspace(Mystring[left]) ) ++left;
+            while ( isspace(Mystring[right]) ) --right;
+
+            Mysize = right - left + 1;
+            for (size_type i = 0; left <= right; ++i, ++left)
+                Mystring[i] = Mystring[left];
+
+            Mystring[Mysize] = String::NULL_S;
+        }
+
+        bool isspace(const value_type ch)
+        {
+            unsigned char c = static_cast<unsigned char>(ch);
+            return c == ' '
+                || c == '\f'
+                || c == '\n'
+                || c == '\r'
+                || c == '\t'
+                || c == '\v';
         }
 
     private:
@@ -242,11 +307,23 @@ int main (void)
     s3.printn();
 
     String_child sc (s1);
+
+    // test reverse
     sc.reverse();
     sc.printn();
 
     sc.reverse();
     sc.printn();
+
+    // test trim
+    sc = "   one two  three          ";
+    sc.printn(); sc.trim(); sc.printn();
+
+    sc = "   one two  three          -";
+    sc.printn(); sc.trim(); sc.printn();
+
+    sc = "-   one two  three          ";
+    sc.trim(); sc.printn();
 
     return 0;
 }
