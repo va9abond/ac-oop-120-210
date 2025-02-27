@@ -265,7 +265,7 @@ class String_child : public String {
             Mystring[Mysize] = String::NULL_S;
         }
 
-        bool isspace(const value_type ch)
+        static bool isspace(const value_type ch)
         {
             unsigned char c = static_cast<unsigned char>(ch);
             return c == ' '
