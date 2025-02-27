@@ -295,35 +295,46 @@ class String_child : public String {
         }
 };
 
+bool compare (const String_child& lhs, const String_child& rhs)
+{
+    auto iter1 = lhs.Unwrapped();
+    auto iter2 = rhs.Unwrapped();
+
+    for (; *iter1 == *iter2; ++iter1, ++iter2)
+        if (*iter1 == '\0') return true;
+
+    return false;
+}
+
 int main (void)
 {
-    String s1 ("rustem sirazetdinov");
-    s1.printn();
+    // String s1 ("rustem sirazetdinov");
+    // s1.printn();
 
     // const char* str = "master";
     // for (char* ptr = const_cast<char*>(str); *ptr != '\0'; ++ptr) {
     //     std::cout << *ptr << '\n';
     // }
 
-    String s (20);
-    const char* str = "master";
-    s = str;
-    s.printn();
-
-    String s2(s1);
-    s2.printn();
-
-    String s3; s3 = s2;
-    s3.printn();
-
-    String_child sc (s1);
+    // String s (20);
+    // const char* str = "master";
+    // s = str;
+    // s.printn();
+    //
+    // String s2(s1);
+    // s2.printn();
+    //
+    // String s3; s3 = s2;
+    // s3.printn();
+    //
+    // String_child sc (s1);
 
     // test reverse
-    sc.reverse();
-    sc.printn();
-
-    sc.reverse();
-    sc.printn();
+    // sc.reverse();
+    // sc.printn();
+    //
+    // sc.reverse();
+    // sc.printn();
 
     // test trim
     // sc = "   one two  three          ";
@@ -336,11 +347,26 @@ int main (void)
     // sc.printn(); sc.trim(); sc.printn();
 
     // test remove_trailing_blanks
-    sc = "- one two three    ";
-    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    // sc = "- one two three    ";
+    // sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    //
+    // sc = "one two three ";
+    // sc.printn(); sc.remove_trailing_blanks(); sc.printn();
 
-    sc = "one two three ";
-    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    // test compare
+    String_child sc1("rustem sirazetdinov");
+    String_child sc2("rustem sirazetdinov");
+
+    std::cout << "compare sc1 and sc2\n";
+    sc1.printn();
+    sc2.printn();
+    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+
+    sc2 = "rustem sirazetdinoW";
+    std::cout << "compare sc1 and sc2\n";
+    sc1.printn();
+    sc2.printn();
+    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
 
     return 0;
 }
