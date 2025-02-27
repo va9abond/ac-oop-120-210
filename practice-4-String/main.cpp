@@ -286,6 +286,41 @@ class String_child : public String {
                 || c == '\v';
         }
 
+        size_type find_last (const char* target)
+        {
+            size_type size = String::size(target);
+
+            for (int i = Mysize-1; i >= 0; --i) {
+                int k = size-1;
+                int j = i;
+                while (j >= 0 && k >= 0 && Mystring[j] == target[k]) {
+                    --j; --k;
+                }
+
+                if (k == -1) return j+1;
+            }
+
+            return Mysize;
+        }
+
+        size_type find_first (const char* target)
+        {
+            pointer begin = const_cast<pointer>(target);
+
+            for (size_type i = 0; i < Mysize; ++i) {
+                pointer iter = begin;
+                size_type j = i;
+
+                while (j < Mysize && Mystring[j] == *iter) {
+                    ++j; ++iter;
+                }
+
+                if (*iter == '\0') return i;
+            }
+
+            return Mysize;
+        }
+
     private:
         void swap (pointer a, pointer b)
         {
@@ -354,19 +389,45 @@ int main (void)
     // sc.printn(); sc.remove_trailing_blanks(); sc.printn();
 
     // test compare
-    String_child sc1("rustem sirazetdinov");
-    String_child sc2("rustem sirazetdinov");
+    // String_child sc1("rustem sirazetdinov");
+    // String_child sc2("rustem sirazetdinov");
+    //
+    // std::cout << "compare sc1 and sc2\n";
+    // sc1.printn();
+    // sc2.printn();
+    // std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    //
+    // sc2 = "rustem sirazetdinoW";
+    // std::cout << "compare sc1 and sc2\n";
+    // sc1.printn();
+    // sc2.printn();
+    // std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
 
-    std::cout << "compare sc1 and sc2\n";
-    sc1.printn();
-    sc2.printn();
-    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    // [TEST] find_first (IndexOf)
+    String_child source ("lorem ipsum dolor sit amet");
+    const char target1[] = " dol";
+    std::cout << "find_first occurance of \"" << target1 << "\" in ";
+    source.printn();
+    std::cout << "pos: " << source.find_first(target1) << '\n';
 
-    sc2 = "rustem sirazetdinoW";
-    std::cout << "compare sc1 and sc2\n";
-    sc1.printn();
-    sc2.printn();
-    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    const char target2[] = "xxx";
+    std::cout << "find_first occurance of \"" << target2 << "\" in ";
+    source.printn();
+    std::cout << "pos: " << source.find_first(target2) << '\n';
+
+
+    // [TEST] find_last (LastIndexOf)
+    const char target3[] = " am";
+    std::cout << "find_first occurance of \"" << target3 << "\" in ";
+    source.printn();
+    std::cout << "pos: " << source.find_last(target3) << '\n';
+
+    // const char target2[] = "xxx";
+    std::cout << "find_first occurance of \"" << target2 << "\" in ";
+    source.printn();
+    std::cout << "pos: " << source.find_last(target2) << '\n';
+
+
 
     return 0;
 }
