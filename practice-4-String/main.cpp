@@ -321,6 +321,42 @@ class String_child : public String {
             return Mysize;
         }
 
+        String_child& insert (size_type pos, const char* str)
+        {
+            if (pos > Mysize)
+                Xrange_error();
+
+            size_type new_size = size(str) + Mysize;
+            String_child buffer(new_size);
+            pointer iter = buffer.Unwrapped();
+
+
+            for (size_type i = 0; i < pos; ++i)
+                *iter++ = Mystring[i];
+
+            pointer it = const_cast<pointer>(str);
+            while ( (*iter = *it) != '\0' ) {
+                ++iter; ++it;
+            }
+
+            for (; Mystring[pos] != NULL_S; ++pos, ++iter)
+                *iter = Mystring[pos];
+
+            *iter = NULL_S;
+
+
+            pointer temp = buffer.Unwrapped();
+            buffer.Mystring = Mystring;
+            Mystring = temp;
+            Mysize = new_size;
+            Mycapacity = buffer.Mycapacity;
+            Myreserved = buffer.Myreserved;
+
+            buffer.Tidy();
+
+            return *this;
+        }
+
     private:
         void swap (pointer a, pointer b)
         {
@@ -476,6 +512,12 @@ int main (void)
     source.printn();
     std::cout << "pos: " << source.find_last(target2) << '\n';
     newline();
+
+    test_name("insert: String_child::insert(size_t pos, const char*)");
+    sc = STRING_LITERAL; sc.printn();
+    sc.insert(4, "XXXXX"); sc.printn();
+    newline();
+
 
 
     newline();
