@@ -39,23 +39,6 @@ class String { // stl: typedef string string_base<char>
             } // most likely case ^^^
         }
 
-        String& operator= (const String& rhs)
-        {
-            if (Mystring != rhs.Mystring) {
-                if (Myreserved != rhs.Myreserved) {
-                    Tidy();
-                    Construct_n(rhs.Mycapacity);
-                } // most likely case ^^^
-
-                Mysize = rhs.Mysize;
-                pointer iter   = rhs.Unwrapped();
-                pointer myiter = Mystring;
-                while ( (*myiter++ = *iter++) != NULL_S ) ;
-            }
-
-            return *this;
-        }
-
         String (const_pointer str)
             : Myreserved(0)
             , Mycapacity(0)
@@ -76,6 +59,23 @@ class String { // stl: typedef string string_base<char>
 
                 *(Mystring+Mysize) = NULL_S;
             }
+        }
+
+        String& operator= (const String& rhs)
+        {
+            if (Mystring != rhs.Mystring) {
+                if (Myreserved != rhs.Myreserved) {
+                    Tidy();
+                    Construct_n(rhs.Mycapacity);
+                } // most likely case ^^^
+
+                Mysize = rhs.Mysize;
+                pointer iter   = rhs.Unwrapped();
+                pointer myiter = Mystring;
+                while ( (*myiter++ = *iter++) != NULL_S ) ;
+            }
+
+            return *this;
         }
 
         String& operator= (const_pointer str)
@@ -341,93 +341,145 @@ bool compare (const String_child& lhs, const String_child& rhs)
     return false;
 }
 
+
+void printn (const std::string_view& str, std::ostream& os = std::cout)
+{
+    os << str << '\n';
+}
+
+void newline()
+{
+    printn("");
+}
+
+void test_name (const std::string_view& test_name)
+{
+    using std::cout; using std::format;
+    static int test_no = 0;
+    cout << format("\033[;1;33m[TEST {}]\033[;0m\n", ++test_no);
+    cout << "\033[;1;32m" << test_name << "\033[;0m" << '\n';
+}
+
+
 int main (void)
 {
-    // String s1 ("rustem sirazetdinov");
-    // s1.printn();
+    using std::cout; using std::format;
+    cout << "\033[;1;31m=== TESTING BEGIN ===\033[;0m\n";
+    newline();
+    newline();
 
-    // const char* str = "master";
-    // for (char* ptr = const_cast<char*>(str); *ptr != '\0'; ++ptr) {
-    //     std::cout << *ptr << '\n';
-    // }
 
-    // String s (20);
-    // const char* str = "master";
-    // s = str;
-    // s.printn();
-    //
-    // String s2(s1);
-    // s2.printn();
-    //
-    // String s3; s3 = s2;
-    // s3.printn();
-    //
-    // String_child sc (s1);
+    constexpr char STRING_LITERAL[] = "Lorem ipsum dolor sit amet";
 
-    // test reverse
-    // sc.reverse();
-    // sc.printn();
-    //
-    // sc.reverse();
-    // sc.printn();
+    test_name("Ctor: String(const char *)");
+    String s (STRING_LITERAL);
+    s.printn();
+    newline();
 
-    // test trim
-    // sc = "   one two  three          ";
-    // sc.printn(); sc.trim(); sc.printn();
-    //
-    // sc = "   one two  three          -";
-    // sc.printn(); sc.trim(); sc.printn();
-    //
-    // sc = "-   one two  three          ";
-    // sc.printn(); sc.trim(); sc.printn();
+    test_name("Ctor: String(size_t 20)");
+    String s1;
+    s1.printn();
+    newline();
 
-    // test remove_trailing_blanks
-    // sc = "- one two three    ";
-    // sc.printn(); sc.remove_trailing_blanks(); sc.printn();
-    //
-    // sc = "one two three ";
-    // sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    test_name("String& operator= (const char *)");
+    s1 = STRING_LITERAL;
+    s1.printn();
+    newline();
 
-    // test compare
-    // String_child sc1("rustem sirazetdinov");
-    // String_child sc2("rustem sirazetdinov");
-    //
-    // std::cout << "compare sc1 and sc2\n";
-    // sc1.printn();
-    // sc2.printn();
-    // std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
-    //
-    // sc2 = "rustem sirazetdinoW";
-    // std::cout << "compare sc1 and sc2\n";
-    // sc1.printn();
-    // sc2.printn();
-    // std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    test_name("Ctor: String (const String& other)");
+    String s2(s1);
+    s2.printn();
+    newline();
 
-    // [TEST] find_first (IndexOf)
-    String_child source ("lorem ipsum dolor sit amet");
-    const char target1[] = " dol";
+    test_name("String& operator= (const String& other)");
+    String s3; s3 = s2;
+    s3.printn();
+    newline();
+
+    test_name("default Ctor: String_child (const String& other)");
+    String_child sc (s);
+    newline();
+
+    test_name("reverse string: String_child::reverse()");
+    sc.reverse();
+    sc.printn();
+    newline();
+
+    test_name("reverse string again: String_child::reverse()");
+    sc.reverse();
+    sc.printn();
+    newline();
+
+    test_name("remove whitespaces before and after: String_child::trim()");
+    sc = "   one two  three          ";
+    sc.printn(); sc.trim(); sc.printn();
+    newline();
+
+    test_name("remove whitespaces before and after: String_child::trim()");
+    sc = "   one two  three          -";
+    sc.printn(); sc.trim(); sc.printn();
+    newline();
+
+    test_name("remove whitespaces before and after: String_child::trim()");
+    sc = "-   one two  three          ";
+    sc.printn(); sc.trim(); sc.printn();
+    newline();
+
+    test_name("remove trailing blanks: String_child::remove_trailing_blanks()");
+    sc = "-   one two three    ";
+    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    newline();
+
+    test_name("remove trailing blanks: String_child::remove_trailing_blanks()");
+    sc = "one two three   ";
+    sc.printn(); sc.remove_trailing_blanks(); sc.printn();
+    newline();
+
+    String_child sc1(STRING_LITERAL);
+    String_child sc2(STRING_LITERAL);
+
+    test_name("compare strings sc1 and sc2");
+    sc1.printn();
+    sc2.printn();
+    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    newline();
+
+    test_name("compare strings sc1 and sc2");
+    sc2 = "rustem sirazetdinov";
+    sc1.printn();
+    sc2.printn();
+    std::cout << std::format("sc1 == sc2 is {}\n", compare(sc1, sc2));
+    newline();
+
+    test_name("String_child::find_first()");
+    String_child source (STRING_LITERAL);
+    constexpr char target1[] = " dol";
     std::cout << "find_first occurance of \"" << target1 << "\" in ";
     source.printn();
     std::cout << "pos: " << source.find_first(target1) << '\n';
+    newline();
 
-    const char target2[] = "xxx";
+    constexpr char target2[] = "xxx";
     std::cout << "find_first occurance of \"" << target2 << "\" in ";
     source.printn();
     std::cout << "pos: " << source.find_first(target2) << '\n';
+    newline();
 
-
-    // [TEST] find_last (LastIndexOf)
-    const char target3[] = " am";
+    test_name("String_child::find_first()");
+    constexpr char target3[] = " am";
     std::cout << "find_first occurance of \"" << target3 << "\" in ";
     source.printn();
     std::cout << "pos: " << source.find_last(target3) << '\n';
+    newline();
 
-    // const char target2[] = "xxx";
     std::cout << "find_first occurance of \"" << target2 << "\" in ";
     source.printn();
     std::cout << "pos: " << source.find_last(target2) << '\n';
+    newline();
 
 
+    newline();
+    cout << "\033[;1;31m=== TESTING END ===\033[;0m\n";
 
     return 0;
 }
