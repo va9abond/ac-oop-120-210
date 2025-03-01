@@ -2,7 +2,7 @@
 #include <format>
 
 
-struct A1 {
+class A1 {
     public:
         A1 (int m) : a1(m)
         {
@@ -23,7 +23,7 @@ struct A1 {
         int a1;
 };
 
-struct A2 {
+class A2 {
     public:
         A2 (int m) : a2(m)
         {
@@ -44,7 +44,7 @@ struct A2 {
         int a2;
 };
 
-struct A3 {
+class A3 {
     public:
         A3 (int m) : a3(m)
         {
@@ -65,9 +65,9 @@ struct A3 {
         int a3;
 };
 
-struct B1 : public A1, virtual public A3 {
+class B1 : virtual public A1, virtual public A3 {
     public:
-        B1 (int m) : A3(m), A1(m), b1(m)
+        B1 (int m) : A1(m), A3(m), b1(m)
         {
             std::cout << std::format("B1 ctor: B1({})\n", m);
         }
@@ -86,9 +86,9 @@ struct B1 : public A1, virtual public A3 {
         int b1;
 };
 
-struct B2 : public A2, virtual public A3 {
+class B2 : virtual public A2, virtual public A3 {
     public:
-        B2 (int m) : A3(m), A2(m), b2(m)
+        B2 (int m) : A2(m), A3(m), b2(m)
         {
             std::cout << std::format("B2 ctor: B2({})\n", m);
         }
@@ -107,9 +107,9 @@ struct B2 : public A2, virtual public A3 {
         int b2;
 };
 
-struct C1 : public B1, public B2 {
+class C1 : public B1, public B2 {
     public:
-        C1 (int m) : A3(-1), B1(m), B2(m), c1(m)
+        C1 (int m) : A1(m), A3(m), A2(m), B1(m), B2(m), c1(m)
         {
             std::cout << std::format("С1 ctor: С1({})\n", m);
         }
@@ -134,9 +134,9 @@ struct C1 : public B1, public B2 {
         int c1;
 };
 
-struct C2 : public B1, public B2 {
+class C2 : public B1, public B2 {
     public:
-        C2 (int m) : A3(-2), B1(m), B2(m), c2(m)
+        C2 (int m) : A1(m), A3(-2), A2(m), B1(m), B2(m), c2(m)
         {
             std::cout << std::format("С2 ctor: С2({})\n", m);
         }
@@ -161,9 +161,9 @@ struct C2 : public B1, public B2 {
         int c2;
 };
 
-struct C3 : public B1, public B2 {
+class C3 : public B1, public B2 {
     public:
-        C3 (int m) : A3(-3), B1(m), B2(m), c3(m)
+        C3 (int m) : A1(m), A3(-3), A2(m), B1(m), B2(m), c3(m)
         {
             std::cout << std::format("С3 ctor: С3({})\n", m);
         }
