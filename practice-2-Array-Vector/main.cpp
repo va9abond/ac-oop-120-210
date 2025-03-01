@@ -572,11 +572,10 @@ class MySortedArray : public MyArrayChild {
         size_type IndexOf (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true) = delete;
 
-        // bin search in range [first, last)
-        size_type search (const_reference& val, size_type first, size_type last)
+        size_type IndexOf (const_reference& val)
         {
-            size_type left  = first;
-            size_type right = last;
+            size_type left  = 0;
+            size_type right = Mysize;
             size_type mid   = left + (right-left)/2;
 
             while (left < right) {
@@ -589,6 +588,11 @@ class MySortedArray : public MyArrayChild {
 
             return last;
         }
+
+        // bin search in range [first, last)
+        // size_type search (const_reference& val, size_type first, size_type last)
+        // {
+        // }
 };
 
 // =======
@@ -818,22 +822,22 @@ int main (void)
 
     size_t pos = 0;
     printn_test_name("[TEST]: pos = vcs.search(31)");
-    pos = vcs.search(31, 0, vcs.size());
+    pos = vcs.IndexOf(31);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.search(9)");
-    pos = vcs.search(9, 0, vcs.size());
+    pos = vcs.IndexOf(9);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.search(0)");
-    pos = vcs.search(0, 0, vcs.size());
+    pos = vcs.IndexOf(0);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.search(4)");
-    pos = vcs.search(4, 0, vcs.size());
+    pos = vcs.IndexOf(4);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
