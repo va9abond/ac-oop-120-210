@@ -586,7 +586,7 @@ class MySortedArray : public MyArrayChild {
                 mid = left + (right-left)/2;
             }
 
-            return last;
+            return Mysize;
         }
 
         // bin search in range [first, last)
@@ -821,22 +821,22 @@ int main (void)
     printn("");
 
     size_t pos = 0;
-    printn_test_name("[TEST]: pos = vcs.search(31)");
+    printn_test_name("[TEST]: pos = vcs.IndexOf(31)");
     pos = vcs.IndexOf(31);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn_test_name("[TEST]: pos = vcs.search(9)");
+    printn_test_name("[TEST]: pos = vcs.IndexOf(9)");
     pos = vcs.IndexOf(9);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn_test_name("[TEST]: pos = vcs.search(0)");
+    printn_test_name("[TEST]: pos = vcs.IndexOf(0)");
     pos = vcs.IndexOf(0);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
-    printn_test_name("[TEST]: pos = vcs.search(4)");
+    printn_test_name("[TEST]: pos = vcs.IndexOf(4)");
     pos = vcs.IndexOf(4);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
