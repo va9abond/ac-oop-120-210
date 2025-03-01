@@ -436,6 +436,31 @@ int main (void)
     String_child sc (s);
     newline();
 
+    test_name("Ctor: String_child(const char *)");
+    String scc (STRING_LITERAL);
+    scc.printn();
+    newline();
+
+    test_name("Ctor: String_child(size_t 250)");
+    String scc1(250);
+    scc1.printn();
+    newline();
+
+    test_name("String_child& operator= (const char *)");
+    scc1 = STRING_LITERAL;
+    scc1.printn();
+    newline();
+
+    test_name("Ctor: String_child (const String_child& other)");
+    String scc2(scc1);
+    scc2.printn();
+    newline();
+
+    test_name("String& operator= (const String_child& other)");
+    String scc3; scc3 = scc2;
+    scc3.printn();
+    newline();
+
     test_name("reverse string: String_child::reverse()");
     sc.reverse();
     sc.printn();
