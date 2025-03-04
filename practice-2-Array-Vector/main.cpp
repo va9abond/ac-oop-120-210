@@ -6,7 +6,7 @@
                            // 2 - reallocations
 constexpr unsigned int CAPACITY_SHADOW = 10;
 
-class MyArrayParent {
+class Vector {
     public:
         using value_type      = double;
         using reference       = double&;
@@ -17,7 +17,7 @@ class MyArrayParent {
 
     public:
         // Vector with 'count' capacity (no default init-tion)
-        explicit MyArrayParent (size_type count = 100)
+        explicit Vector (size_type count = 100)
             : Mycapacity(count) // : Mycapacity(count + CAPACITY_SHADOW)
             , Mysize(0)
         {
@@ -30,7 +30,7 @@ class MyArrayParent {
         }
 
         // Vector of 'count' values 'val'
-        explicit MyArrayParent (size_type count, const value_type &val)
+        explicit Vector (size_type count, const value_type &val)
             : Mycapacity(count)
             , Mysize(0)
         {
@@ -111,7 +111,7 @@ class MyArrayParent {
 
     public:
         // C-array to Vector
-        MyArrayParent (double *other, size_type size)
+        Vector (double *other, size_type size)
             : Mycapacity(size)
             , Mysize(0)
         {
@@ -129,7 +129,7 @@ class MyArrayParent {
 // ========================
 
 // [RoF] I. Copy constructor
-        MyArrayParent (const MyArrayParent& other)
+        Vector (const Vector& other)
         {
             Construct_n(other.Mycapacity);
             Mycapacity = other.Mycapacity;
@@ -138,7 +138,7 @@ class MyArrayParent {
         }
 
 // [RoF] II. Move constructor
-        MyArrayParent (MyArrayParent&& other)
+        Vector (Vector&& other)
         {
             Mycapacity = other.Mycapacity;
             Mysize = other.Mysize;
@@ -149,7 +149,7 @@ class MyArrayParent {
         }
 
 // [RoF] III. Copy assignment operator
-        MyArrayParent& operator= (const MyArrayParent& rhs)
+        Vector& operator= (const Vector& rhs)
         {
             if (this != &rhs) {
                 if (Mycapacity != rhs.Mycapacity) {
@@ -165,7 +165,7 @@ class MyArrayParent {
         }
 
 // [RoF] IV. Move assignment operator
-        MyArrayParent& operator= (MyArrayParent&& other)
+        Vector& operator= (Vector&& other)
         {
             Tidy();
 
@@ -180,7 +180,7 @@ class MyArrayParent {
         }
 
 // [RoF] V. Destructor
-        ~MyArrayParent()
+        ~Vector()
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -305,9 +305,9 @@ class MyArrayParent {
 // get<pos>(array)
 
 
-class MyArrayChild : public MyArrayParent {
+class Vector_child : public Vector {
     public:
-        using Mybase          = MyArrayParent;
+        using Mybase          = Vector;
         using value_type      = Mybase::value_type;
         using reference       = Mybase::reference;
         using const_reference = Mybase::const_reference;
@@ -316,7 +316,7 @@ class MyArrayChild : public MyArrayParent {
         using const_pointer   = Mybase::const_pointer;
 
     public:
-        explicit MyArrayChild (size_type count = 100) : MyArrayParent(count)
+        explicit Vector_child (size_type count = 100) : Vector(count)
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -324,7 +324,7 @@ class MyArrayChild : public MyArrayParent {
 #endif
         }
 
-        ~MyArrayChild()
+        ~Vector_child()
         {
 #if DEBUG_INFO_LEVEL == 1
             std::cout <<
@@ -390,7 +390,7 @@ class MyArrayChild : public MyArrayParent {
 
     public:
         // XXX what if not found
-        size_type IndexOf (const_reference& val,
+        size_type find (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true)
         {
             // check if [first, last) in [Mycont, Mycont+Mysize) and first < last
@@ -402,7 +402,7 @@ class MyArrayChild : public MyArrayParent {
         }
 
         // insert val at where
-        pointer InsertAt (const_pointer where, const_reference val)
+        pointer insert (const_pointer where, const_reference val)
         {
             if (Mysize < Mycapacity) { // most likely case
                 // VER.1 - raw pointers (fuuny, but dangerous)
@@ -431,9 +431,9 @@ class MyArrayChild : public MyArrayParent {
                 New_capacity = Mycapacity + 1;
             }
 
-            pointer Old_mycont = MyArrayParent::Mycont;
+            pointer Old_mycont = Vector::Mycont;
             pointer New_where = nullptr;
-            MyArrayParent::Construct_n(New_capacity);
+            Vector::Construct_n(New_capacity);
             Mycapacity = New_capacity;
 
             {
@@ -459,7 +459,7 @@ class MyArrayChild : public MyArrayParent {
         }
 
         // range = [first, last)
-        MyArrayChild slice (size_type first, size_type last)
+        Vector_child slice (size_type first, size_type last)
         {
             // check if [first, last) in [Mycont, Mycont+Mysize) and first < last
             if (Mycont+first < Mycont || Mycont+last > Mycont+Mysize || first > last) {
@@ -467,7 +467,7 @@ class MyArrayChild : public MyArrayParent {
             } // rare case
 
             size_type size = last - first;
-            MyArrayChild sub_vector(size) ;
+            Vector_child sub_vector(size) ;
 
             sub_vector.Assign_counted_range(Mycont+first, size);
             // pointer sub_iter = sub_vector.Mycont;
@@ -481,12 +481,12 @@ class MyArrayChild : public MyArrayParent {
         }
 
         // range [pos, pos+count)
-        MyArrayChild slice_by_count (size_type pos, size_type count)
+        Vector_child slice_by_count (size_type pos, size_type count)
         {
             if (count > Mysize-pos)
                 Xrange_error();
 
-            MyArrayChild sub_vector(count);
+            Vector_child sub_vector(count);
 
             sub_vector.Assign_counted_range(Mycont+pos, count);
             // pointer sub_iter = sub_vector.Mycont;
@@ -497,24 +497,24 @@ class MyArrayChild : public MyArrayParent {
             return sub_vector;
         }
 
-        MyArrayChild& operator+= (const value_type rhs)
+        Vector_child& operator+= (const value_type rhs)
         {
-            MyArrayParent::push(rhs);
+            Vector::push(rhs);
             return *this;
         }
 };
 
-MyArrayChild operator+ (const MyArrayChild& lhs,
-                        const MyArrayChild::value_type rhs)
+Vector_child operator+ (const Vector_child& lhs,
+                        const Vector_child::value_type rhs)
 {
-    MyArrayChild v {lhs};
+    Vector_child v {lhs};
     v += rhs;
     return v;
 }
 
-MyArrayChild normalize (const MyArrayChild &other)
+Vector_child normalize (const Vector_child &other)
 {
-    MyArrayChild result {other};
+    Vector_child result {other};
     if (size_t size = other.size(); size > 0)
         for (size_t i = 1; i < size-1; ++i)
             result[i] = (other[i-1]+other[i+1])/2;
@@ -523,9 +523,9 @@ MyArrayChild normalize (const MyArrayChild &other)
 }
 
 
-class MySortedArray : public MyArrayChild {
+class Vector_sorted : public Vector_child {
     public:
-        using Mybase          = MyArrayChild;
+        using Mybase          = Vector_child;
         using value_type      = Mybase::value_type;
         using reference       = Mybase::reference;
         using const_reference = Mybase::const_reference;
@@ -535,7 +535,7 @@ class MySortedArray : public MyArrayChild {
 
 
     public:
-        explicit MySortedArray (size_type size) : MyArrayChild(size) { }
+        explicit Vector_sorted (size_type size) : Vector_child(size) { }
 
         // pointer InsertAt (const_pointer where, const_reference val) = delete;
 
@@ -566,13 +566,13 @@ class MySortedArray : public MyArrayChild {
                 mid = left + (right-left)/2;
             }
 
-            MyArrayChild::InsertAt(Mycont+mid, val);
+            Vector_child::insert(Mycont+mid, val);
         }
 
-        size_type IndexOf (const_reference& val,
+        size_type find (const_reference& val,
                 size_type first, size_type last, bool lr_direction = true) = delete;
 
-        size_type IndexOf (const_reference& val)
+        size_type find (const_reference& val)
         {
             size_type left  = 0;
             size_type right = Mysize;
@@ -653,7 +653,7 @@ int main (void)
 
 
     printn_test_name("[TEST]: Vector::Vector(size_type): Vector v(10)");
-    MyArrayParent v(10);
+    Vector v(10);
     printn("");
 
     printn_test_name("[TEST]: Vector::push_back: v.push_back(0), ..., v.push_back(9)");
@@ -681,12 +681,12 @@ int main (void)
     printn("");
 
     printn_test_name("[TEST]: Vector::Vector(const Vector&): Vector u(v)");
-    MyArrayParent u(v);
+    Vector u(v);
     u.printn();
     printn("");
 
     printn_test_name("[TEST]: Vector::Vector(size_type): Vector h{}");
-    MyArrayParent h{};
+    Vector h{};
     h.printn();
     printn("");
 
@@ -702,13 +702,13 @@ int main (void)
 
     printn_test_name("[TEST]: Vector::Vector(double *, size_type): g[] = {23, 23, 42, 8024, 20} and Vector p(g, std::size(g))");
     double g[] = {23, 23, 42, 8024, 20};
-    MyArrayParent p(g, std::size(g));
+    Vector p(g, std::size(g));
     p.printn();
     printn("");
 
 
     printn_test_name("[TEST]: Vector_child::Vector_child(size_type): Vector_child vc(10)");
-    MyArrayChild vc(10);
+    Vector_child vc(10);
     printn("");
 
     printn_test_name("[TEST]: vc.push_back(0), ..., vc.push_back(9)");
@@ -731,22 +731,22 @@ int main (void)
 
     iter = &vc[4];
     printn_test_name("[TEST]: insert(28, &vc[4])");
-    iter = vc.InsertAt(iter, 28);
+    iter = vc.insert(iter, 28);
     vc.printn();
     printn("");
 
     printn_test_name("[TEST]: insert(29, &vc[4])");
-    iter = vc.InsertAt(iter, 29);
+    iter = vc.insert(iter, 29);
     vc.printn();
     printn("");
 
     printn_test_name("[TEST]: insert(30, &vc[4])");
-    iter = vc.InsertAt(iter, 30);
+    iter = vc.insert(iter, 30);
     vc.printn();
     printn("");
 
     printn_test_name("[TEST]: insert(31, &vc[4])");
-    iter = vc.InsertAt(iter, 31);
+    iter = vc.insert(iter, 31);
     vc.printn();
     printn("");
 
@@ -774,10 +774,10 @@ int main (void)
     printn("");
 
     std::cout << std::format("\033[;1;32m[TEST]: vc.find(101, 0, vc.size())\033[;0m = {}\n",
-            vc.IndexOf(101, 0, vc.size()));
+            vc.find(101, 0, vc.size()));
     printn("");
     std::cout << std::format("\033[;1;32m[TEST]: vc.find(55, 0, vc.size())\033[;0m = {}\n",
-            vc.IndexOf(55, 0, vc.size()));
+            vc.find(55, 0, vc.size()));
     printn("");
 
     printn_test_name("[TEST]: Normalize vector (task 2.2.3)");
@@ -785,7 +785,7 @@ int main (void)
     printn("");
 
     printn_test_name("[TEST]: Vector_child_sorted vcs(10))");
-    MySortedArray vcs(10);
+    Vector_sorted vcs(10);
     vcs.printn();
     printn("");
 
@@ -822,22 +822,22 @@ int main (void)
 
     size_t pos = 0;
     printn_test_name("[TEST]: pos = vcs.IndexOf(31)");
-    pos = vcs.IndexOf(31);
+    pos = vcs.find(31);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.IndexOf(9)");
-    pos = vcs.IndexOf(9);
+    pos = vcs.find(9);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.IndexOf(0)");
-    pos = vcs.IndexOf(0);
+    pos = vcs.find(0);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
     printn_test_name("[TEST]: pos = vcs.IndexOf(4)");
-    pos = vcs.IndexOf(4);
+    pos = vcs.find(4);
     std::cout << "pos: " << pos << "; vcs[pos]: " << vcs[pos] << '\n';
     printn("");
 
