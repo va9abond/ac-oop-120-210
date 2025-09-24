@@ -312,16 +312,7 @@ void print (const std::multimap<K,M> &mmap, char delim, char end) {
 
 template <typename K, typename M>
 map_const_iterator<K,M> find_by_key (const K &key, const std::map<K,M> &map) {
-    bool flag_found = false;
-    auto it = map.begin();
-    while (flag_found == false && it != map.end()) {
-        if (it->first == key)
-            flag_found = true;
-        else
-            ++it;
-    }
-
-    return it;
+    return map.find(key);
 }
 
 template <typename K, typename M>
@@ -388,16 +379,7 @@ std::vector<M> get_all_by_key (const K &key, const std::multimap<K,M> &map) {
 
 template <typename K, typename M>
 map_const_iterator<K,M> find_by_key (const K &key, const std::multimap<K,M> &map) {
-    bool flag_found = false;
-    auto it = map.begin();
-    while (flag_found == false && it != map.end()) {
-        if (it->first == key)
-            flag_found = true;
-        else
-            ++it;
-    }
-
-    return it;
+    return map.find(key);
 }
 
 template <typename K, typename M>
