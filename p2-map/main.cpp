@@ -370,9 +370,13 @@ std::set<M> get_unique_mapped (const std::map<K,M> &map) {
 template <typename K, typename M>
 std::vector<M> get_all_by_key (const K &key, const std::multimap<K,M> &map) {
     std::vector<M> rvec;
-    for (auto it = map.begin(); it != map.end(); ++it)
-        if (it->first == key)
-            rvec.emplace_back(it->second);
+
+    auto it_pivot = map.find(key);
+
+    for (auto it = it_pivot; it != map.end() && it->first == key; --it)
+        rvec.emplace_back(it->second);
+    for (auto it = ++it_pivot; it != map.end() && it->first == key; ++it)
+        rvec.emplace_back(it->second);
 
     return rvec;
 }
