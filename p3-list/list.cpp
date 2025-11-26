@@ -126,12 +126,12 @@ public:
         return Temp;
     }
 
-    bool operator== (const List_Const_Iterator& rhs) const {
-        return Myptr == rhs.Myptr;
+    bool operator== (const List_Const_Iterator& Rhs) const {
+        return Myptr == Rhs.Myptr;
     }
 
-    bool operator!= (const List_Const_Iterator& rhs) const {
-        return Myptr != rhs.Myptr;
+    bool operator!= (const List_Const_Iterator& Rhs) const {
+        return Myptr != Rhs.Myptr;
     }
 
 
@@ -302,9 +302,8 @@ private:
     }
 
     Nodeptr Emplace (const Nodeptr Where, const value_type &Val) {
-        if (Mysize == max_size()) {
+        if (Mysize == max_size())
             throw std::runtime_error("list too long");
-        }
 
         Nodeptr Pnode = Node::Construct_Node(Val);
         Attach_Before(Where, Pnode);
@@ -314,7 +313,6 @@ private:
     }
 
 public:
-
     iterator insert (const_iterator Where, const value_type &Val) {
         Nodeptr Inserted = Emplace(Where.Myptr, Val);
         return iterator(Inserted);
