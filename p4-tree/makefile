@@ -25,5 +25,9 @@ clean:
 	rm tree.o
 	rm $(TARGET)
 
+run: $(TARGET)
+	./$(TARGET)
+	
+
 .PHONY: run valgrind build clean
 

@@ -4,7 +4,7 @@
 #include <cstring>
 #include <type_traits>
 
-#define DEBUG 1
+#define DEBUG 0
 
 
 template <typename Value_type>
@@ -712,6 +712,10 @@ public:
         return Myptr != Rhs.Myptr;
     }
 
+    Nodeptr Unwrapped() const {
+        return Myptr;
+    }
+
 
 public:
     Nodeptr Myptr;
@@ -1060,7 +1064,7 @@ protected:
 protected:
     std::pair<Nodeptr, bool> Emplace (const value_type &Val) {
         if (Mysize == max_size())
-            throw std::runtime_error("list too long");
+            throw std::runtime_error("tree too big");
 
         const key_type &Pnode_key = Val.first;
         Tree_Find_Result Loc = Find_Lower_Bound(Pnode_key);
@@ -1477,7 +1481,7 @@ public:
 protected:
     std::pair<Nodeptr, bool> Emplace (const value_type &Val) {
         if (Mybase::Mysize == Mybase::max_size())
-            throw std::runtime_error("list too long");
+            throw std::runtime_error("tree too big");
 
         Nodeptr Pnode = Node::Buy_Node(Mybase::Myhead, Val);
         const key_type &Pnode_key = Tree_traits::Extract_Key(Pnode);
@@ -1534,90 +1538,119 @@ public:
     using const_iterator = Mybase::const_iterator;
 
 
-private:
-    // void splay (const typename Mybase::Tree_Find_Result &Loc) {
-    //     if (Loc.Bound->Ishead)
-    //         return;
-    //
-    //     // case: zig or zag
-    //     if (Loc.Parent == Mybase::Myhead->Parent) {
-    //
-    //         if (Loc.Child_tag == Mybase::Tree_Child_Tag::Left)
-    //             Pnode = Mybase::Rrotate(Loc.Parent);
-    //         else
-    //             Pnode = Mybase::Lrotate(Loc.Parent);
-    //
-    //     } else if (Loc.Child_tag == Mybase::Tree_Child_Tag::Left &&
-    //             Loc.Parent->Parent->Left == Loc.Parent) {
-    //
-    //         if (Loc.Parent->Parent == Mybase::Myhead->Parent) {
-    //             Mybase::Rrotate(Mybase::Myhead->Parent);
-    //             Mybase::Rrotate(Mybase::Myhead->Parent);
-    //         } else {
-    //             Loc.Parent = Mybase::Rrotate(Loc.Parent->Parent);
-    //             Loc.Bound = Mybase::Rrotate(Loc.Parent);
-    //             splay(Loc);
-    //         }
-    //
-    //     } else if (Loc.Child_tag == Mybase::Tree_Child_Tag::Right &&
-    //             Loc.Parent->Parent->Right == Loc.Parent) {
-    //
-    //         if (Loc.Parent->Parent == Mybase::Myhead->Parent) {
-    //             Mybase::Lrotate(Mybase::Myhead->Parent);
-    //             Mybase::Lrotate(Mybase::Myhead->Parent);
-    //         } else {
-    //             Loc.Parent = Mybase::Lrotate(Loc.Parent->Parent);
-    //             Loc.Bound = Mybase::Lrotate(Loc.Parent);
-    //             splay(Loc);
-    //         }
-    //
-    //     } else if (Loc.Child_tag == Mybase::Tree_Child_Tag::Right &&
-    //             Loc.Parent->Parent->Left == Loc.Parent) {
-    //
-    //         Loc.Bound = Mybase::Lrotate(Loc.Parent);
-    //
-    //         if (Loc.Parent == Mybase::Myhead->Parent)
-    //             Mybase::Rrotate(Mybase::Myhead->Parent);
-    //         else {
-    //             Loc.Bound = Mybase::Rrotate(Loc.Parent);
-    //             splay(Loc);
-    //         }
-    //
-    //     } else if (Loc.Child_tag == Mybase::Tree_Child_Tag::Left &&
-    //             Loc.Parent->Parent->Right == Loc.Parent) {
-    //
-    //         Loc.Bound = Mybase::Rrotate(Loc.Parent);
-    //
-    //         if (Loc.Parent == Mybase::Myhead->Parent)
-    //             Mybase::Lrotate(Mybase::Myhead->Parent);
-    //         else {
-    //             Loc.Bound = Mybase::Lrotate(Loc.Parent);
-    //             splay(Loc);
-    //         }
-    //
-    //     }
-    //
-    //     return;
-    // }
+protected:
+    /* If there is an element with the specified key,
+       it promotes it to the root of the tree; otherwise,
+       it promotes the last element that was accessed while
+       searching for the desired element. */
+    void lookup (const key_type &Key) {
+        const typename Mybase::Tree_Find_Result Loc =
+            Mybase::Find_Lower_Bound(Key);
 
-    // void Emplace (const value_type &Val) {
-    //     if (Mysize == max_size())
-    //         throw std::runtime_error("list too long");
-    //     
-    // }
+        // Loc.Bound: exactly the element with the given key
+        // Loc.Parent: the last element that was accessed
+        Nodeptr Pnode = (!Loc.Bound->Ishead && (Tree_traits::Extract_Key(Loc.Bound) == Key)) ?
+            Loc.Bound : Loc.Parent;
 
-    // Nodeptr Find (const key_type &Key) {
-    //     const Tree_Find_Result Loc = Find_Lower_Bound(Key);
-    //     return
-    //         !Loc.Bound->Ishead && (Tree_traits::Extract_Key(Loc.Bound) == Key) ?
-    //         Loc.Bound : Myhead;
-    // }
+        while (Pnode != Mybase::Myhead->Parent)
+            splay(Pnode);
 
-    // Nodeptr 
+        return;
+    }
+
+    // Zig | Zag | Zig-Zig | Zag-Zag | Zig-Zag | Zag-Zig
+    void splay (Nodeptr Pnode) {
+        if (Pnode->Ishead)
+            return;
+
+        Nodeptr Parent = Pnode->Parent;
+        typename Mybase::Tree_Child_Tag Child_tag;
+        if (Parent->Right == Pnode)
+            Child_tag = Mybase::Tree_Child_Tag::Right;
+        else
+            Child_tag = Mybase::Tree_Child_Tag::Left;
+
+
+        // (1) Zig | Zag
+        if (Parent == Mybase::Myhead->Parent) {
+
+            if (Child_tag == Mybase::Tree_Child_Tag::Left)
+                Pnode = Mybase::Rrotate(Parent);
+            else
+                Pnode = Mybase::Lrotate(Parent);
+
+        // (2) Zig-Zig
+        } else if (Child_tag == Mybase::Tree_Child_Tag::Left &&
+                Parent->Parent->Left == Parent) {
+
+            Parent = Mybase::Rrotate(Parent->Parent);
+            Pnode = Mybase::Rrotate(Parent);
+            // if (Parent->Parent == Mybase::Myhead->Parent) {
+            //     Mybase::Rrotate(Mybase::Myhead->Parent);
+            //     Mybase::Rrotate(Mybase::Myhead->Parent);
+            // } else {
+            //     Parent = Mybase::Rrotate(Parent->Parent);
+            //     Pnode = Mybase::Rrotate(Parent);
+            //     splay(Loc);
+            // }
+
+        // (3) Zag-Zag
+        } else if (Child_tag == Mybase::Tree_Child_Tag::Right &&
+                Parent->Parent->Right == Parent) {
+
+                Parent = Mybase::Lrotate(Parent->Parent);
+                Pnode = Mybase::Lrotate(Parent);
+
+        // (4) Zag-Zig
+        } else if (Child_tag == Mybase::Tree_Child_Tag::Right &&
+                Parent->Parent->Left == Parent) {
+
+            Pnode = Mybase::Lrotate(Parent);
+            Pnode = Mybase::Rrotate(Pnode->Parent);
+
+        // (5) Zig-Zag
+        } else if (Child_tag == Mybase::Tree_Child_Tag::Left &&
+                Parent->Parent->Right == Parent) {
+
+            Pnode = Mybase::Rrotate(Parent);
+            Pnode = Mybase::Lrotate(Pnode->Parent);
+
+        }
+
+        return;
+    }
+
+    Nodeptr Find (const key_type &Key) {
+        lookup(Key);
+
+        Nodeptr root = Mybase::Myhead->Parent;
+        return (Tree_traits::Extract_Key(root) == Key) ?
+            root : Mybase::Myhead;
+    }
 
 public:
+    const_iterator find (const key_type &Key) {
+        return const_iterator(Find(Key));
+    }
 
+    // Can't overload??
+    // iterator find (const key_type &Key) {
+    //     return iterator(this->Find(Key));
+    // }
+
+    std::pair<iterator, bool> insert (const value_type &Val) {
+        const auto &[Where, Success] = Mybase::Emplace(Val);
+        lookup(Val.first);
+        return { iterator(Where), Success };
+    }
+
+    std::pair<iterator, bool> erase (const key_type &Key) {
+        lookup(Key);
+        const auto &[Nextnode, Success] = Mybase::Erase(Key);
+        return { iterator(Nextnode), Success };
+    }
 };
+
 
 class Program {
     public:
@@ -1763,6 +1796,9 @@ void print (const queue<T> &queue, char delim = ' ', char end = '\n') {
 
 
 int main() {
+    // ************************
+    // TREE 2.3
+    // ************************
     tree<int, int> mymap {
         {60, 6}, {70, 7}, {80, 8}, {90, 9}, {100, 0},
         {10, 1}, {20, 2}, {30, 3}, {40, 4}, {50, 5}
@@ -1779,7 +1815,9 @@ int main() {
     putchar('\n');
     putchar('\n');
 
-
+    // ************************
+    // MULTITREE 2.3
+    // ************************
     multitree<int, int> multimap {
         {10, 1}, {10, 0}, {20, 2}, {30, 3}, {40, 4},
         {50, 5}, {60, 6}, {70, 7}, {60, 8}, {20, 9}
@@ -1791,9 +1829,13 @@ int main() {
     auto pq = multimap[20];
     print(pq);
 
-#if DEBUG
     printf("\n\n");
 
+
+
+    // ************************
+    // OTHER TESTS
+    // ************************
     printf("Print using iterators ASCENDING order (in-order traversal)\n");
     for (auto it = mymap.begin(); it != mymap.end(); ++it)
         println(*it);
@@ -1850,8 +1892,9 @@ int main() {
 
 
 
-
-
+    // ************************
+    // USE CLASS Program
+    // ************************
     Program prog_array[12] = {
         { "[A]compiler", "Rustem", "asm", 1.0, true, true, true, 11 },
         { "[B]string library", "Rustem", "C", 2.0, true, false, true, 2 },
@@ -1899,7 +1942,28 @@ int main() {
     else
         puts("Tree doesn't contain value: prog_array[10]");
     printf("\n");
-#endif // DEBUG
+
+    // ************************
+    // SPLAY TREE 2.5
+    // ************************
+    splay_tree<int, int> tsplay {
+        {6, 60}, {7, 70}, {3, 30}, {4, 40}, {5, 50}
+    };
+    tsplay.display();
+    putchar('\n');
+
+    tsplay.find(7);
+    tsplay.display();
+    putchar('\n');
+
+    tsplay.insert({10, 100});
+    tsplay.display();
+    putchar('\n');
+
+    tsplay.erase(10);
+    tsplay.display();
+    putchar('\n');
+
 
 
     return 0;
